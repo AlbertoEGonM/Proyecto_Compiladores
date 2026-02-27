@@ -144,6 +144,11 @@ public class AFN {
 
     /*  Union de varios AFN's en un SuperUnion */
     public void UnirAFN(Stack<AFN> F){
+        if(F == null || F.isEmpty())
+            return;
+
+        F.add(this);
+
         Estado e1 = new Estado();
 		
 		this.E_Regular = '('+"";
