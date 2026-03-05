@@ -37,6 +37,16 @@ public class Sj {
             return;
         }
         
+        if(f.EstadosAcept == null || f.EstadosAcept.isEmpty()){
+            EsFinal = false;
+            return;
+        }
+
+        if(!ConjuntoEdo.containsAll(f.EstadosAcept)){
+            EsFinal = false;
+            return;
+        }
+
         HashSet<Estado> ConjuntoEdoTemp = new HashSet<>();
         ConjuntoEdoTemp.addAll(ConjuntoEdo);
         
