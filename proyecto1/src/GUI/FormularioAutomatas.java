@@ -1,11 +1,9 @@
-package GUI;
-
 import javax.swing.*;
 
-public class Panel extends JFrame {
+public class FormularioAutomatas extends JFrame {
 
-    public Panel() {
-        setTitle("Analizador de Autómatas - ESCOM");
+    public FormularioAutomatas() {
+        setTitle("Analizador de Autómatas");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -26,37 +24,44 @@ public class Panel extends JFrame {
         JMenuItem itemAnalizarCadena = new JMenuItem("Analizar una Cadena");
         JMenuItem itemProbarLexico = new JMenuItem("Probar analizador Léxico");
 
-        // --- CONEXIÓN DE TODAS LAS VENTANAS ---
-        // Nota: Para que este archivo compile sin errores, deberás crear 
-        // un archivo .java para cada una de estas clases.
+        // --- CONEXIÓN DE LAS VENTANAS ---
         
-        itemBasico.addActionListener(e -> new VentanaBasico(this).setVisible(true));
-        itemUnir.addActionListener(e -> new VentanaUnir(this).setVisible(true));
-        itemConcatenar.addActionListener(e -> new VentanaConcatenar(this).setVisible(true));
-        
-        itemCerraduraPositiva.addActionListener(e -> new VentanaCerraduraPositiva(this).setVisible(true));
-        itemCerraduraEstrella.addActionListener(e -> new VentanaCerraduraEstrella(this).setVisible(true));
-        itemOpcional.addActionListener(e -> new VentanaOpcional(this).setVisible(true));
-        
-        itemERaAFN.addActionListener(e -> new VentanaERaAFN(this).setVisible(true));
-        itemUnionLexico.addActionListener(e -> new VentanaUnionLexico(this).setVisible(true));
-        itemConvertirAFNaAFD.addActionListener(e -> new VentanaConvertirAFNaAFD(this).setVisible(true));
-        
-        itemAnalizarCadena.addActionListener(e -> new VentanaAnalizarCadena(this).setVisible(true));
-        itemProbarLexico.addActionListener(e -> new VentanaProbarLexico(this).setVisible(true));
+        itemBasico.addActionListener(e -> {
+            VentanaBasico ventana = new VentanaBasico(this);
+            ventana.setVisible(true);
+        });
 
-        // Ensamblar el menú desplegable
+        itemUnir.addActionListener(e -> {
+            VentanaUnir ventana = new VentanaUnir(this);
+            ventana.setVisible(true);
+        });
+
+        itemERaAFN.addActionListener(e -> {
+            VentanaERaAFN ventana = new VentanaERaAFN(this);
+            ventana.setVisible(true);
+        });
+
+        // Para las demás, sigue exactamente el mismo patrón:
+        itemConcatenar.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+        itemCerraduraPositiva.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+        itemCerraduraEstrella.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+        itemOpcional.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+        itemUnionLexico.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+        itemConvertirAFNaAFD.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+        itemAnalizarCadena.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+        itemProbarLexico.addActionListener(e -> JOptionPane.showMessageDialog(this, "Ventana en construcción"));
+
+        // Ensamblar
         menuAFN.add(itemBasico);
         menuAFN.add(itemUnir);
         menuAFN.add(itemConcatenar);
         menuAFN.add(itemCerraduraPositiva);
         menuAFN.add(itemCerraduraEstrella);
         menuAFN.add(itemOpcional);
-        menuAFN.addSeparator(); // Divisor visual
+        menuAFN.addSeparator();
         menuAFN.add(itemERaAFN);
         menuAFN.add(itemUnionLexico);
         menuAFN.add(itemConvertirAFNaAFD);
-        menuAFN.addSeparator(); // Divisor visual
         menuAFN.add(itemAnalizarCadena);
         menuAFN.add(itemProbarLexico);
 
