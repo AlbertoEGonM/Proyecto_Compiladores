@@ -4,7 +4,7 @@ import AFD.AFD;
 import AFN.SimbESP;
 import java.util.Stack;
 
-public class AnalizLexico {
+public class AnalisisLexico {
     public int token;
     private int EdoActual, EdoTransicion;
     private String CadenaSigma;
@@ -15,7 +15,7 @@ public class AnalizLexico {
     private Stack<Integer> Pila = new Stack<>();
     private AFD AutomataFD;
 
-    public AnalizLexico() {
+    public AnalisisLexico() {
         CadenaSigma = "";
         PasoPorEdoAcept = false;
         IniLexema = 0;
@@ -27,7 +27,7 @@ public class AnalizLexico {
     }
 
 
-    public AnalizLexico(String sigma, String rutaAFD) {
+    public AnalisisLexico(String sigma, String rutaAFD) {
         AutomataFD = new AFD(rutaAFD);
         CadenaSigma = sigma;
         PasoPorEdoAcept = false;
