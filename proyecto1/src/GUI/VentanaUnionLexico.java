@@ -1,5 +1,7 @@
-import javax.swing.*;
+package GUI;
+
 import java.awt.*;
+import javax.swing.*;
 
 public class VentanaUnionLexico extends JDialog {
     public VentanaUnionLexico(JFrame parent) {

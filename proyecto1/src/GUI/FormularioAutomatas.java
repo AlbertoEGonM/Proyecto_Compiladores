@@ -1,3 +1,5 @@
+package GUI;
+
 import javax.swing.*;
 
 public class FormularioAutomatas extends JFrame {

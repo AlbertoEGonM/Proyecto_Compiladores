@@ -12,7 +12,8 @@ public class AnalizLexico {
     private boolean PasoPorEdoAcept;
     private int IniLexema, FinLexema, IndiceCaracterActual;
     private char CaracterActual;
-    private Stack<Integer> Pila = new Stack<>(); 
+    private Stack<Integer> Pila = new Stack<>();
+    private AFD AutomataFD;
 
     public AnalizLexico() {
         CadenaSigma = "";
@@ -53,7 +54,8 @@ public class AnalizLexico {
 
             if (IndiceCaracterActual >= CadenaSigma.length()) {
                 Lexema = "";
-                return SimbESP.Fin; /
+                return SimbESP.Fin; 
+            }
 
             IniLexema = IndiceCaracterActual;
             EdoActual = 0;
@@ -64,7 +66,6 @@ public class AnalizLexico {
             while (IndiceCaracterActual < CadenaSigma.length()) {
                 CaracterActual = CadenaSigma.charAt(IndiceCaracterActual);
                 
-
                 int c = (int) CaracterActual;
                 if (c > 255) c = 255; 
 
@@ -79,9 +80,9 @@ public class AnalizLexico {
                     }
                     IndiceCaracterActual++;
                     EdoActual = EdoTransicion;
-                    continue;
                 }
-                break;
+                else
+                    break;
             }
 
 
@@ -95,11 +96,8 @@ public class AnalizLexico {
             Lexema = CadenaSigma.substring(IniLexema, FinLexema + 1);
             IndiceCaracterActual = FinLexema + 1;
 
-            if (token == SimbESP.Omitir) {
-                continue;
-            } else {
+            if (token != SimbESP.Omitir)
                 return token;
-            }
         }
     }
 }
