@@ -1,5 +1,6 @@
 package GUI;
 
+import AFN.AFN;
 import java.awt.*;
 import javax.swing.*;
 
@@ -10,13 +11,18 @@ public class VentanaCerraduraEstrella extends JDialog {
         setLocationRelativeTo(parent);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 
-        String[] afns = {"AFN 1", "AFN 2"};
-        JComboBox<String> comboAfn = new JComboBox<>(afns);
+        JComboBox<String> comboAfn = new JComboBox<>(AFN.getAllERegular());
         JButton btnAplicar = new JButton("Aplicar Cerradura *");
 
         btnAplicar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Cerradura * aplicada a: " + comboAfn.getSelectedItem());
-            this.dispose();
+            AFN afn = AFN.getAFNByER((String) comboAfn.getSelectedItem());
+            if(afn != null) {
+                afn.CerrKleene();
+                JOptionPane.showMessageDialog(this, "Cerradura * aplicada a: " + comboAfn.getSelectedItem() + "\nNuevo AFN: " + afn.IdAFN + "\nER: " + afn.E_Regular);
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(this, "Error al obtener el AFN seleccionado");
+            }
         });
 
         add(new JLabel("Selecciona un AFN:"));

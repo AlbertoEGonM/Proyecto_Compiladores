@@ -410,6 +410,65 @@ public class AFN {
         }
     }
 
+    // Metodos para obtener informacion del AFN
+
+    public String[] getInfoAFN(){
+        String[] info = new String[4];
+        info[0] = "AFN " + this.IdAFN + ": " + this.E_Regular;
+        info[1] = "Alfabeto: " + this.Alfabeto;
+        info[2] = "Estados: { ";
+            for(Estado e : this.EstadosAFN){
+                info[2] += (e.IdEdo)+",";
+            }
+        info[2] += " }";
+        info[3] = "Estado Inicial: " + this.EdoInicial.IdEdo;
+
+        return info;
+    }
+
+    public String getE_Regular(){
+        return this.E_Regular;
+    }
+
+    public static String[] getAllERegular(){
+        String [] ERs = new String[ColeccAFNs.size()];
+        int i = 0;
+        for(AFN afn : ColeccAFNs){
+            ERs[i] = afn.E_Regular;
+            i++;
+        }
+        return ERs;
+    }
+
+    public static AFN getAFNByER(String ER){
+        for(AFN afn : ColeccAFNs){
+            if(afn.E_Regular.equals(ER))
+                return afn;
+        }
+        return null;
+    }
+
+    public AFN getAFNById(int Id){
+        for(AFN afn : ColeccAFNs){
+            if(afn.IdAFN == Id)
+                return afn;
+        }
+        return null;
+    }
+
+
+    public String[][] getAllInfoAFN(){
+        String[][] info = new String[ColeccAFNs.size()][4];
+        int i = 0;
+        for(AFN afn : ColeccAFNs){
+            System.arraycopy(afn.getInfoAFN(), 0, info[i], 0, 4);
+            i++;
+        }
+    
+        return info;
+    
+    }
+
     // Test
     public static void main(String[] args) {
         /*
@@ -506,15 +565,33 @@ public class AFN {
         AFN8.CerrPositiva();
         AFN8.ImprimirAFN();
 
-        AFN6.ConcatenarAFN(AFN8);
+        //AFN6.ConcatenarAFN(AFN8);
 
         System.out.println("AFN6 Concatenado con AFN8: \n");
 
         AFN6.ImprimirAFN();
 
         AFN6.EstadosAcept.forEach(e -> { e.Token = 20; System.out.println("Estado de Aceptacion: " + e.IdEdo + " Token: " + e.Token); });
+/*
+        for(AFN afn : AFN.ColeccAFNs){
+            System.out.println("AFN " + afn.IdAFN + ": " + afn.E_Regular);
+        }*/
 
-//        AFD AFD1 = new AFD();
+        System.out.println("----------------------------------------------");
+        System.out.println("----------------------------------------------");
+        System.out.println("----------------------------------------------");
+
+        String[][] info = AFN6.getAllInfoAFN();
+        for(String[] i : info){
+            //System.out.println("AFN Info:");
+            for(String s : i){
+                System.out.println(s);
+            }
+            System.out.println("-------------");
+        }
+
+        //        AFD AFD1 = new AFD();
+
   //      AFD1.ConvertirAFD(AFN6);
 
         

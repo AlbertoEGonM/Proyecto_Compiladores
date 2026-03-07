@@ -1,4 +1,4 @@
-package Lexico;
+package lexico;
 
 import AFD.AFD;
 import AFN.SimbESP;

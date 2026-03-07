@@ -1,5 +1,7 @@
 package GUI;
 
+import AFN.AFN;
+
 import java.awt.*;
 import javax.swing.*;
 
@@ -10,20 +12,32 @@ public class VentanaConcatenar extends JDialog {
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLayout(new GridLayout(3, 2, 10, 10));
-
-        String[] afnsDisponibles = {"AFN 1", "AFN 2", "AFN 3"}; 
-
+        
+    
         JLabel label1 = new JLabel("Selecciona AFN A:");
-        JComboBox<String> comboAfn1 = new JComboBox<>(afnsDisponibles);
+        JComboBox<String> comboAfn1 = new JComboBox<>(AFN.getAllERegular());
         JLabel label2 = new JLabel("Selecciona AFN B:");
-        JComboBox<String> comboAfn2 = new JComboBox<>(afnsDisponibles);
+        JComboBox<String> comboAfn2 = new JComboBox<>(AFN.getAllERegular());
 
         JButton btnConcatenar = new JButton("Concatenar");
         JButton btnCancelar = new JButton("Cancelar");
 
         btnConcatenar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Se concatenaron: " + comboAfn1.getSelectedItem() + " y " + comboAfn2.getSelectedItem());
-            this.dispose();
+            String afnA = (String) comboAfn1.getSelectedItem();
+            String afnB = (String) comboAfn2.getSelectedItem();
+            if(afnA.equals(afnB)) {
+                JOptionPane.showMessageDialog(this, "No puedes concatenar el mismo AFN consigo mismo");
+            } else {
+                AFN afn1 = AFN.getAFNByER(afnA);
+                AFN afn2 = AFN.getAFNByER(afnB);
+                if(afn1 == null || afn2 == null) {
+                    JOptionPane.showMessageDialog(this, "Error al obtener los AFNs seleccionados");
+                }else{
+                    afn1.ConcatenarAFN(afn2); // Aquí llamas a tu método de concatenación en la clase AFN
+                    JOptionPane.showMessageDialog(this, "Se concatenaron: " + afnA + " y " + afnB + "\nNuevo AFN con ID: " + afn1.IdAFN + " : E.R.: " + afn1.E_Regular);
+                    this.dispose();
+                }
+            }
         });
         btnCancelar.addActionListener(e -> this.dispose());
 

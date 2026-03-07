@@ -13,6 +13,8 @@ public class Panel extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu menuAFN = new JMenu("AFN's");
         JMenu menuSintactico = new JMenu("Analisis Sintáctico");
+        /*JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new BorderLayout());*/
 
         JMenuItem itemBasico = new JMenuItem("Básico");
         JMenuItem itemUnir = new JMenuItem("Unir");

@@ -3,6 +3,8 @@ package GUI;
 import java.awt.*;
 import javax.swing.*;
 
+import AFN.AFN;
+
 public class VentanaUnionLexico extends JDialog {
     public VentanaUnionLexico(JFrame parent) {
         super(parent, "Unión para Analizador Léxico", true);
@@ -10,8 +12,7 @@ public class VentanaUnionLexico extends JDialog {
         setLocationRelativeTo(parent);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 15));
 
-        String[] afns = {"AFN 1", "AFN 2"};
-        JComboBox<String> comboAfn = new JComboBox<>(afns);
+        JComboBox<String> comboAfn = new JComboBox<>(AFN.getAllERegular());
         JTextField txtToken = new JTextField(10);
         JButton btnAgregar = new JButton("Agregar al Analizador");
 
