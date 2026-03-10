@@ -2,6 +2,7 @@ package GUI;
 
 import javax.swing.*;
 
+
 public class Panel extends JFrame {
 
     public Panel() {
@@ -13,6 +14,7 @@ public class Panel extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu menuAFN = new JMenu("AFN's");
         JMenu menuSintactico = new JMenu("Analisis Sintáctico");
+
         /*JPanel panelPrincipal = new JPanel();
         panelPrincipal.setLayout(new BorderLayout());*/
 
@@ -27,6 +29,7 @@ public class Panel extends JFrame {
         JMenuItem itemConvertirAFNaAFD = new JMenuItem("Convertir AFN a AFD");
         JMenuItem itemAnalizarCadena = new JMenuItem("Analizar una Cadena");
         JMenuItem itemProbarLexico = new JMenuItem("Probar analizador Léxico");
+        JMenuItem itemAFNs = new JMenuItem("Ver AFN's creados");
 
         // --- CONEXIÓN DE TODAS LAS VENTANAS ---
         // Nota: Para que este archivo compile sin errores, deberás crear 
@@ -46,6 +49,7 @@ public class Panel extends JFrame {
         
         itemAnalizarCadena.addActionListener(e -> new VentanaAnalizarCadena(this).setVisible(true));
         itemProbarLexico.addActionListener(e -> new VentanaProbarLexico(this).setVisible(true));
+        itemAFNs.addActionListener(e -> new VentanaAFNS(this).setVisible(true));
 
         // Ensamblar el menú desplegable
         menuAFN.add(itemBasico);
@@ -61,6 +65,7 @@ public class Panel extends JFrame {
         menuAFN.addSeparator(); // Divisor visual
         menuAFN.add(itemAnalizarCadena);
         menuAFN.add(itemProbarLexico);
+        menuAFN.add(itemAFNs); 
 
         menuBar.add(menuAFN);
         menuBar.add(menuSintactico);
