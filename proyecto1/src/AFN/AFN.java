@@ -100,7 +100,7 @@ public class AFN {
         this.EstadosAFN.add(e1);
         this.EstadosAFN.add(e2);
         this.EstadosAcept.add(e2);
-        this.E_Regular = "["+c1+","+c2+"]";
+        this.E_Regular = "["+c1+"-"+c2+"]";
 
         for(char c = c1 ; c <= c2; c++) //Sigma = {c1, c1+1, ..., c2}
             this.Alfabeto.add(c);

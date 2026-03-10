@@ -11,8 +11,7 @@ public class VentanaOpcional extends JDialog {
         setLocationRelativeTo(parent);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 
-        String[] afns = {"AFN 1", "AFN 2"};
-        JComboBox<String> comboAfn = new JComboBox<>(afns);
+        JComboBox<String> comboAfn = new JComboBox<>(AFN.getAllERegular());
         JButton btnAplicar = new JButton("Hacer Opcional (?)");
 
         btnAplicar.addActionListener(e -> {

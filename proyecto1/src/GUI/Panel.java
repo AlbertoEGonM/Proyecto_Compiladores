@@ -68,9 +68,12 @@ public class Panel extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
+        /*SwingUtilities.invokeLater(() -> {
             FormularioAutomatas ventana = new FormularioAutomatas();
             ventana.setVisible(true);
-        });
+        });*/
+        new Panel().setVisible(true);
+
+
     }
 }
