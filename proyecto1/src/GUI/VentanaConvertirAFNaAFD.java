@@ -19,7 +19,7 @@ public class VentanaConvertirAFNaAFD extends JDialog {
         btnConvertir.addActionListener(e -> {
             AFN afnSeleccionado = AFN.getAFNByER((String) comboAfn.getSelectedItem());
             if(afnSeleccionado != null) {
-                AFD afdResultante = new AFD(afnSeleccionado);
+                AFD.afdResultante = new AFD(afnSeleccionado);
                 // Aquí podrías mostrar el AFD resultante en una nueva ventana o guardarlo
                 JOptionPane.showMessageDialog(this, "AFN '" + comboAfn.getSelectedItem() + "' convertido a AFD con éxito." + "\nNúmero de estados en el AFD: " + afdResultante.numEstadosSj);
                 

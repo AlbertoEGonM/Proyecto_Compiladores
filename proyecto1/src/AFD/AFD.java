@@ -10,7 +10,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Stack;
 
-public class AFD {
+public class AFD implements java.io.Serializable {
+	public static AFD afdResultante = null; // AFD resultante de la conversion de un AFN, se declara como variable global para poder mostrarlo en la ventana de conversion.
+
+	public static final long serialVersionUID = 1L; // Para la serialización del AFD, se asigna un ID único para evitar problemas de compatibilidad al guardar y cargar objetos AFD desde archivos binarios.
+
 	public int numEstadosSj;
 	public HashSet<Character> Alfabeto;
 	public int [][] TablaAFD;
