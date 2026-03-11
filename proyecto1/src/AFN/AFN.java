@@ -9,7 +9,7 @@ public class AFN {
     
     public static HashSet<AFN> ColeccAFNs = new HashSet<>(); // Lista de AFN's
     public static int ContadorAFNs = 0; // Contador de AFN's creados
-    
+
     public Estado EdoInicial;
     public HashSet<Character> Alfabeto;
     public HashSet<Estado> EstadosAFN;

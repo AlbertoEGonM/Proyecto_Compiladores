@@ -5,12 +5,11 @@ import AFN.SimbESP;
 import java.util.Stack;
 
 public class AnalisisLexico {
+    private String CadenaSigma, Lexema;
     public int token;
     private int EdoActual, EdoTransicion;
-    private String CadenaSigma;
-    public String Lexema;
-    private boolean PasoPorEdoAcept;
     private int IniLexema, FinLexema, IndiceCaracterActual;
+    private boolean PasoPorEdoAcept;
     private char CaracterActual;
     private Stack<Integer> Pila = new Stack<>();
     private AFD AutomataFD;
@@ -25,7 +24,6 @@ public class AnalisisLexico {
         Pila.clear();
         AutomataFD = null;
     }
-
 
     public AnalisisLexico(String sigma, String rutaAFD) {
         AutomataFD = new AFD(rutaAFD);
@@ -46,6 +44,42 @@ public class AnalisisLexico {
         IndiceCaracterActual = 0;
         token = -1;
         Pila.clear();
+    }
+
+    public void SetAutomataFD(String rutaAFD) {
+        AutomataFD = new AFD(rutaAFD);
+    }
+
+    public StatusLexico GetStatus() {
+        StatusLexico status = new StatusLexico();
+        status.setAutomataFD(AutomataFD);
+        status.setCadenaSigma(CadenaSigma);
+        status.setEdoActual(EdoActual);
+        status.setEdoTransicion(EdoTransicion);
+        status.setFinLexema(FinLexema);
+        status.setIniLexema(IniLexema);
+        status.setLexema(Lexema);
+        status.setPasoPorEdoAcept(PasoPorEdoAcept);
+        status.setToken(token);
+        status.setIndiceCaracterActual(IndiceCaracterActual);
+        status.setPila(Pila);
+        status.setCaracterActual(CaracterActual);
+        return status;
+    }
+
+    public void getStatus(StatusLexico status) {
+        AutomataFD = status.getAutomataFD();
+        CadenaSigma = status.getCadenaSigma();
+        EdoActual = status.getCaracterActual();
+        EdoTransicion = status.getCaracterActual();
+        FinLexema = status.getFinLexema();
+        IniLexema = status.getIniLexema();
+        Lexema = status.getLexema();
+        PasoPorEdoAcept = status.getPasoPorEdoAcept();
+        token = status.getToken();
+        IndiceCaracterActual = status.getCaracterActual();
+        Pila = status.getPila();
+        CaracterActual = status.getCaracterActual();
     }
 
     public int yylex() {
