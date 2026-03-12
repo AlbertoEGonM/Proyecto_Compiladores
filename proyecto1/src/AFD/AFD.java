@@ -9,9 +9,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Stack;
+import java.util.TreeSet;
 
 public class AFD implements java.io.Serializable {
-	public static AFD afdResultante = null; // AFD resultante de la conversion de un AFN, se declara como variable global para poder mostrarlo en la ventana de conversion.
+	public static AFD afdAsignado = null; // AFD resultante de la conversion de un AFN, se declara como variable global para poder mostrarlo en la ventana de conversion.
 
 	public static final long serialVersionUID = 1L; // Para la serialización del AFD, se asigna un ID único para evitar problemas de compatibilidad al guardar y cargar objetos AFD desde archivos binarios.
 
@@ -110,6 +111,29 @@ public class AFD implements java.io.Serializable {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static String[][] getSumTable() {
+		String [][] sumTable = new String[afdAsignado.numEstadosSj ][afdAsignado.Alfabeto.size()+2];
+		
+		for(int i = 0; i < afdAsignado.numEstadosSj; i++) {
+			sumTable[i][0] = "S" + i;
+
+			for(int j = 0, z = 1; j < 255; j++){
+				if(afdAsignado.TablaAFD[i][j] != -1){
+					sumTable[i][z++] = "" + afdAsignado.TablaAFD[i][j];
+				}
+			}
+			sumTable[i][afdAsignado.Alfabeto.size()+1] = ""+ afdAsignado.TablaAFD[i][255];
+		}
+
+		return sumTable;
+	}
+
+	public static TreeSet<Character> getAlfabeto() {
+		TreeSet<Character> set = new TreeSet<>();
+		set.addAll(afdAsignado.Alfabeto);
+		return set;
 	}
 
 	/*	Habilitar en caso de Test para imprimir el AFD generado a partir del AFN

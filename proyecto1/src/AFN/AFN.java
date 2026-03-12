@@ -413,15 +413,17 @@ public class AFN {
     // Metodos para obtener informacion del AFN
 
     public String[] getInfoAFN(){
-        String[] info = new String[4];
-        info[0] = "AFN " + this.IdAFN + ": " + this.E_Regular;
-        info[1] = "Alfabeto: " + this.Alfabeto;
-        info[2] = "Estados: { ";
+        String[] info = new String[5];
+        info[0] = this.IdAFN+ ""; // ID del AFN 
+        info[1] = "" + this.E_Regular; // E. Regular del AFN
+        info[2] = "" + this.Alfabeto; // Alfabeto del AFN
+        info[3] = "{ "; // Estados del AFN
             for(Estado e : this.EstadosAFN){
-                info[2] += (e.IdEdo)+",";
+                info[3] += (e.IdEdo)+",";
             }
-        info[2] += " }";
-        info[3] = "Estado Inicial: " + this.EdoInicial.IdEdo;
+        info[3] = info[3].substring(0, info[3].length() - 1); // Elimina la ultima coma
+        info[3] += " }";
+        info[4] = "" + this.EdoInicial.IdEdo; // Estado Inicial del AFN
 
         return info;
     }
@@ -457,16 +459,14 @@ public class AFN {
     }
 
 
-    public String[][] getAllInfoAFN(){
-        String[][] info = new String[ColeccAFNs.size()][4];
+    public static String[][] getAllInfoAFN(){
+        String[][] info = new String[ColeccAFNs.size()][5];
         int i = 0;
         for(AFN afn : ColeccAFNs){
-            System.arraycopy(afn.getInfoAFN(), 0, info[i], 0, 4);
+            System.arraycopy(afn.getInfoAFN(), 0, info[i], 0, 5);
             i++;
         }
-    
         return info;
-    
     }
 
     // Test
