@@ -115,15 +115,25 @@ public class AFD implements java.io.Serializable {
 
 	public static String[][] getSumTable() {
 		String [][] sumTable = new String[afdAsignado.numEstadosSj ][afdAsignado.Alfabeto.size()+2];
-		
+		TreeSet<Character> alfabeto = AFD.getAlfabeto();
+
+
 		for(int i = 0; i < afdAsignado.numEstadosSj; i++) {
 			sumTable[i][0] = "S" + i;
 
-			for(int j = 0, z = 1; j < 255; j++){
+			int z=1;
+			for(Character a : alfabeto){
+				if(afdAsignado.TablaAFD[i][a] != -1){
+					sumTable[i][z] = "" + afdAsignado.TablaAFD[i][a];
+				}
+				z++;
+			}
+
+			/*for(int j = 0, z = 1; j < 255; j++){
 				if(afdAsignado.TablaAFD[i][j] != -1){
 					sumTable[i][z++] = "" + afdAsignado.TablaAFD[i][j];
 				}
-			}
+			}*/
 			sumTable[i][afdAsignado.Alfabeto.size()+1] = ""+ afdAsignado.TablaAFD[i][255];
 		}
 

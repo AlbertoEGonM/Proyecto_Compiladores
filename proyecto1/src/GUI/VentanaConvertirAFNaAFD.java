@@ -9,10 +9,12 @@ import javax.swing.*;
 public class VentanaConvertirAFNaAFD extends JDialog {
     public VentanaConvertirAFNaAFD(JFrame parent) {
         super(parent, "Convertir AFN a AFD", true);
-        setSize(600, 300);
+        setSize(600, 550);
         setLocationRelativeTo(parent);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
+
         JTable tabla = new JTable();
+        tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         JScrollPane sp = new JScrollPane(tabla);  
 
         JComboBox<String> comboAfn = new JComboBox<>(AFN.getAllERegular());
@@ -28,6 +30,7 @@ public class VentanaConvertirAFNaAFD extends JDialog {
                     AFD.getSumTable(),
                     CabeceraTabla()
                 ));
+                tabla.setPreferredSize(getPreferredSize());
             } else {
                 JOptionPane.showMessageDialog(this, "Error al convertir el AFN seleccionado.");
             }
@@ -36,7 +39,7 @@ public class VentanaConvertirAFNaAFD extends JDialog {
         add(new JLabel("Selecciona el AFN a convertir:"));
         add(comboAfn);
         add(btnConvertir);
-        add(sp);
+        this.add(sp);
     }
 
     private static String[] CabeceraTabla(){
