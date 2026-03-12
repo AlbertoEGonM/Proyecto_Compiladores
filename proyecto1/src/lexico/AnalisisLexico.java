@@ -107,9 +107,11 @@ public class AnalisisLexico {
 
                 if (EdoTransicion != -1) {
     
+                    // 001 a
+                    // ->[0,1]->((a))
                     if (AutomataFD.TablaAFD[EdoTransicion][256] != -1) {
-                        PasoPorEdoAcept = true;
                         token = AutomataFD.TablaAFD[EdoTransicion][256];
+                        PasoPorEdoAcept = true ;
                         FinLexema = IndiceCaracterActual;
                     }
                     IndiceCaracterActual++;

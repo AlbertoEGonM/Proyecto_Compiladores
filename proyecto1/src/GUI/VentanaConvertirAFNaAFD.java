@@ -3,7 +3,6 @@ package GUI;
 import AFD.AFD;
 import AFN.AFN;
 import java.awt.*;
-import java.util.TreeSet;
 import javax.swing.*;
 
 public class VentanaConvertirAFNaAFD extends JDialog {
@@ -28,7 +27,7 @@ public class VentanaConvertirAFNaAFD extends JDialog {
                 JOptionPane.showMessageDialog(this, "AFN '" + comboAfn.getSelectedItem() + "' convertido a AFD con éxito." + "\nNúmero de estados en el AFD: " + AFD.afdAsignado.numEstadosSj);
                 tabla.setModel(new javax.swing.table.DefaultTableModel(
                     AFD.getSumTable(),
-                    CabeceraTabla()
+                    AFD.CabeceraTabla()
                 ));
                 tabla.setPreferredSize(getPreferredSize());
             } else {
@@ -42,19 +41,6 @@ public class VentanaConvertirAFNaAFD extends JDialog {
         this.add(sp);
     }
 
-    private static String[] CabeceraTabla(){
-        String [] cabecera = new String[AFD.afdAsignado.Alfabeto.size() + 2];
-        cabecera[0] = "Estado";
-        TreeSet<Character> alfabeto = AFD.getAlfabeto();
-        int i = 1;
-        for(Character c : alfabeto){
-            cabecera[i] = String.valueOf(c);
-            i++;
-        }
-        
-        cabecera[AFD.afdAsignado.Alfabeto.size() + 1] = "Token";
-        
-        return cabecera;
-    };
+    
 
 }
