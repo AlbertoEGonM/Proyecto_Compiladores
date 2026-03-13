@@ -1,37 +1,3 @@
-package GUI;
-
-/*import java.awt.Color;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-public class GrafoShow extends JFrame {
-
-    public GrafoShow(){
-        JFrame Ventana = new JFrame();
-        Ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Ventana.setSize(800,500);
-        Ventana.setTitle("Grafo");
-        Ventana.setLocationRelativeTo(null);
-        Ventana.setVisible(true);
-        JPanel panel = new JPanel();
-        Ventana.add(panel);
-        panel.setBounds(20, 20, 600, 300);
-        panel.setBackground(Color.BLUE);
-        
-        JFrame frame = new JFrame("Grafo Interactivo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new PanelGrafo(nodos, aristas));
-        frame.setSize(600, 500);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        
-    }
-
-
-    /*public static void main(String[] args) {
-        new GrafoShow();
-    }
-}*/
 
 import java.awt.*;
 import java.awt.event.*;
@@ -39,39 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
-/*class Nodo {
-    int x, y;
-    String etiqueta;
-    static final int RADIO = 20;
+import AFN.AFN;
+import AFN.Estado;
+import AFN.Transicion;
 
-    public Nodo(String etiqueta, int x, int y) {
-        this.etiqueta = etiqueta;
-        this.x = x;
-        this.y = y;
-    }
-
-    public boolean contienePunto(int px, int py) {
-        return Math.sqrt(Math.pow(px - x, 2) + Math.pow(py - y, 2)) <= RADIO;
-    }
-}*/
-
-/*class Arista {
-    Nodo origen, destino;
-    String Simbolo;
-    public Arista(Nodo origen, Nodo destino, String Simbolo) {
-        this.origen = origen;
-        this.destino = destino;
-        this.Simbolo = Simbolo;
-    }
-}*/
-
-
+import java.util.HashMap;
 
 public class PanelGrafo extends JPanel {
-    private final List<Nodo> nodos;
-    private final List<Arista> aristas;
-    private Nodo nodoSeleccionado = null;
-    private Nodo nodoOrigenArista = null; // Nodo para crear aristas
+    static final int RADIO = 20;
+    public final List<Nodo> nodos = new ArrayList<>();
+    public final List<Arista> aristas = new ArrayList<>();
+    public Nodo nodoSeleccionado = null;
+    public Nodo nodoOrigenArista = null; // Nodo para crear aristas
 
     public PanelGrafo(List<Nodo> nodos, List<Arista> aristas) {
         this.nodos = nodos;
@@ -151,10 +96,10 @@ public class PanelGrafo extends JPanel {
                 g2.setColor(Color.white);
             }
             
-            g2.fillOval(n.x - Nodo.RADIO, n.y - Nodo.RADIO, Nodo.RADIO * 2, Nodo.RADIO * 2);
+            g2.fillOval(n.x - RADIO, n.y - RADIO, RADIO * 2, RADIO * 2);
             
             g2.setColor(Color.BLACK);
-            g2.drawOval(n.x - Nodo.RADIO, n.y - Nodo.RADIO, Nodo.RADIO * 2, Nodo.RADIO * 2);
+            g2.drawOval(n.x - RADIO, n.y - RADIO, RADIO * 2, RADIO * 2);
 
             // Etiqueta
             FontMetrics fm = g2.getFontMetrics();
@@ -174,8 +119,8 @@ public class PanelGrafo extends JPanel {
 
         // Ajustar el punto de destino para que la flecha toque el BORDE del nodo
         // (Restamos el RADIO del nodo en la dirección del ángulo)
-        int destinoX = (int) (x2 - Nodo.RADIO * Math.cos(angulo));
-        int destinoY = (int) (y2 - Nodo.RADIO * Math.sin(angulo));
+        int destinoX = (int) (x2 - RADIO * Math.cos(angulo));
+        int destinoY = (int) (y2 - RADIO * Math.sin(angulo));
 
         // Dibujar la línea principal
         g2.setColor(Color.BLACK);
@@ -199,6 +144,30 @@ public class PanelGrafo extends JPanel {
             int midY = (y1 + destinoY) / 2;
             g2.setColor(Color.black); // Color distintivo para el alfabeto
             g2.drawString(a.Simbolo, midX, midY - 5);
+        }
+    }
+
+    private void GetNodosAndAristas(AFN F){
+        HashMap<Estado,Nodo> R = new HashMap<>();
+        int i = 1, j = 1;
+        for(Estado ev : F.EstadosAFN){
+            Nodo NodEv = new Nodo(""+ev.IdEdo, i*10, j*10 );
+            R.put(ev,NodEv);
+            
+            for(Transicion t : ev.Transiciones){
+                
+                if(R.containsKey(t.EdoFinal))
+                    aristas.add(new Arista(NodEv, R.get(t.EdoFinal), (t.simbolo1.equals(t.simbolo2) ? t.simbolo1 + "" : "["+t.simbolo1+"-"+t.simbolo2+"]" )));
+                
+                else if(t.EdoFinal != null){
+                    Nodo NodAux = new Nodo(""+t.EdoFinal.IdEdo, (i++)*10, j*10);
+                    R.put(t.EdoFinal, NodAux);
+                    aristas.add(new Arista(NodEv, NodAux, (t.simbolo1.equals(t.simbolo2) ? t.simbolo1 + "" : "["+t.simbolo1+"-"+t.simbolo2+"]" )));
+                }
+                j++;
+            }
+
+            nodos.addAll(R.values());
         }
     }
 

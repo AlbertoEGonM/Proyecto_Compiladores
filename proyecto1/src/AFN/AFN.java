@@ -365,13 +365,13 @@ public class AFN {
 		return CerraduraEpsilon(Mover(C,c));
     }
 
-    public void ImprimirAFN(){
+    /*public void ImprimirAFN(List<Arista> aristas,List<Nodo> nodos){
         Stack<Estado> Visitados = new Stack<>(); // Stack
         System.out.println("AFN " + this.IdAFN + ": " + this.E_Regular);
         System.out.println("Alfabeto: " + this.Alfabeto);
         /*System.out.println("Estados de Aceptacion: ");
         this.EstadosAcept.forEach(e -> System.out.println("Estado: " + e.IdEdo + " Aceptacion: " + e.EdoAcept + " Token: " + e.Token));
-*/
+*//*
         System.out.print("Estados: { ");
             this.EstadosAFN.forEach(e -> System.out.print((e.IdEdo)+","));
         System.out.println(" }");
@@ -392,23 +392,26 @@ public class AFN {
         
     }
 
-    public void Despliege(Estado e, Stack<Estado> Visitados){
+    public void Despliege(Estado e, Stack<Estado> Visitados, List<Arista> aristas,List<Nodo> nodos){
         if(Visitados.contains(e))
             return;
 
         Visitados.push(e);
+        Nodo nod = new Nodo(""+ e.IdEdo , 10*e.IdEdo , 10*e.IdEdo);
+        nodos.add(nod);
 
         if(e.Transiciones == null || e.Transiciones.isEmpty()){ // En caso de ser un estado final
-            System.out.println("Estado: " + e.IdEdo + " Aceptacion: " + e.EdoAcept + " FIN");
+            
             return;
         }
 
         for(Transicion t : e.Transiciones){
             System.out.println("Estado: " + e.IdEdo + " -> " + t.EdoFinal.IdEdo + " con simbolo: " + (t.Simbolo1 == SimbESP.Epsilon ? "Epsilon" : t.Simbolo1) );
+            aristas.add(new Arista(nod, nod, E_Regular));
 
-            Despliege(t.EdoFinal, Visitados);
+            Despliege(t.EdoFinal, Visitados , aristas, nodos);
         }
-    }
+    }*/
 
     // Metodos para obtener informacion del AFN
 
@@ -544,51 +547,51 @@ public class AFN {
 
         System.out.println("");
             */
-        AFN AFN6 = new AFN('a');
-        AFN AFN7 = new AFN('b');
+        //AFN AFN6 = new AFN('a');
+        //AFN AFN7 = new AFN('b');
 
-        AFN6.ImprimirAFN();
-        AFN7.ImprimirAFN();
+        //AFN6.ImprimirAFN();
+        //AFN7.ImprimirAFN();
 
-        AFN6.UnirAFN(AFN7);
+        //AFN6.UnirAFN(AFN7);
 
-        AFN6.ImprimirAFN();
+        //AFN6.ImprimirAFN();
 
-        AFN6.CerrKleene();
+        //AFN6.CerrKleene();
 
-        AFN6.ImprimirAFN();
+        //AFN6.ImprimirAFN();
 
-        System.out.println("AFN8: ");
+        //System.out.println("AFN8: ");
 
-        AFN AFN8 = new AFN('c');
-        AFN8.ImprimirAFN();
-        AFN8.CerrPositiva();
-        AFN8.ImprimirAFN();
+        //AFN AFN8 = new AFN('c');
+        //AFN8.ImprimirAFN();
+        //AFN8.CerrPositiva();
+        //AFN8.ImprimirAFN();
 
         //AFN6.ConcatenarAFN(AFN8);
 
-        System.out.println("AFN6 Concatenado con AFN8: \n");
+        //System.out.println("AFN6 Concatenado con AFN8: \n");
 
-        AFN6.ImprimirAFN();
+        //AFN6.ImprimirAFN();
 
-        AFN6.EstadosAcept.forEach(e -> { e.Token = 20; System.out.println("Estado de Aceptacion: " + e.IdEdo + " Token: " + e.Token); });
+        //AFN6.EstadosAcept.forEach(e -> { e.Token = 20; System.out.println("Estado de Aceptacion: " + e.IdEdo + " Token: " + e.Token); });
 /*
         for(AFN afn : AFN.ColeccAFNs){
             System.out.println("AFN " + afn.IdAFN + ": " + afn.E_Regular);
         }*/
 
-        System.out.println("----------------------------------------------");
-        System.out.println("----------------------------------------------");
-        System.out.println("----------------------------------------------");
+        //System.out.println("----------------------------------------------");
+        //System.out.println("----------------------------------------------");
+        //System.out.println("----------------------------------------------");
 
-        String[][] info = AFN6.getAllInfoAFN();
-        for(String[] i : info){
+        //String[][] info = AFN6.getAllInfoAFN();
+        //for(String[] i : info){
             //System.out.println("AFN Info:");
-            for(String s : i){
-                System.out.println(s);
-            }
-            System.out.println("-------------");
-        }
+          //  for(String s : i){
+            //    System.out.println(s);
+            //}
+            //System.out.println("-------------");
+        //}
 
         //        AFD AFD1 = new AFD();
 
