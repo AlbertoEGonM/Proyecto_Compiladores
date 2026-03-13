@@ -136,11 +136,13 @@ public class AFD implements java.io.Serializable {
 
 			int z=1;
 			for(Character a : alfabeto){
-				sumTable[i][z] = "" + afdAsignado.TablaAFD[i][a];
+				if(afdAsignado.TablaAFD[i][a] != -1)
+					sumTable[i][z] = "" + afdAsignado.TablaAFD[i][a];
 				z++;
 			}
 			for(Character O : SimbESP.SimbolosOmitir){
-				sumTable[i][z] = "" + afdAsignado.TablaAFD[i][O];
+				if(afdAsignado.TablaAFD[i][O] != -1)
+					sumTable[i][z] = "" + afdAsignado.TablaAFD[i][O];
 				z++;
 			}
 
@@ -165,9 +167,9 @@ public class AFD implements java.io.Serializable {
             i++;
         }
 		for(Character O : SimbESP.SimbolosOmitir){
-				cabecera[i] = String.valueOf(O);
-				i++;
-			}
+			cabecera[i] = String.valueOf(O);
+			i++;
+		}
         
         cabecera[AFD.afdAsignado.Alfabeto.size() + 1 + SimbESP.SimbolosOmitir.size()] = "Token";
         

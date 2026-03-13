@@ -27,6 +27,7 @@ public class Panel extends JFrame {
         JMenuItem itemConvertirAFNaAFD = new JMenuItem("Convertir AFN a AFD");
         JMenuItem itemAnalizarCadena = new JMenuItem("Analizar una Cadena");
         JMenuItem itemProbarLexico = new JMenuItem("Probar analizador Léxico");
+        JMenuItem itemVentanaAFNs = new JMenuItem("Mostrar AFNs");
 
         // --- CONEXIÓN DE TODAS LAS VENTANAS ---
         // Nota: Para que este archivo compile sin errores, deberás crear 
@@ -46,6 +47,7 @@ public class Panel extends JFrame {
         
         itemAnalizarCadena.addActionListener(e -> new VentanaAnalizarCadena(this).setVisible(true));
         itemProbarLexico.addActionListener(e -> new VentanaProbarLexico(this).setVisible(true));
+        itemVentanaAFNs.addActionListener(e-> new VentanaAFNS(this).setVisible(true));
 
         // Ensamblar el menú desplegable
         menuAFN.add(itemBasico);
@@ -61,6 +63,7 @@ public class Panel extends JFrame {
         menuAFN.addSeparator(); // Divisor visual
         menuAFN.add(itemAnalizarCadena);
         menuAFN.add(itemProbarLexico);
+        menuAFN.add(itemVentanaAFNs);
 
         menuBar.add(menuAFN);
         menuBar.add(menuSintactico);

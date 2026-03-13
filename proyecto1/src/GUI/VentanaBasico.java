@@ -24,9 +24,9 @@ public class VentanaBasico extends JDialog {
             String caracter = txtCaracter.getText();
             String caracter2 = txtCaracter2.getText();
             if(caracter.length() > 1 || caracter2.length() > 1  || caracter.equals(caracter2) ) {
-                    JOptionPane.showMessageDialog(this, "Los caracteres deben ser de un solo símbolo y no pueden ser iguales");
-                    return;
-                }
+                JOptionPane.showMessageDialog(this, "Los caracteres deben ser de un solo símbolo y no pueden ser iguales, o caracter 1 debe ser menor al caracter 2");
+                return;
+            }
             if(!caracter.isEmpty() && !caracter2.isEmpty()) {
                 
                 // Aquí llamarás a tu clase de Lógica: AFN miAfn = new AFN(caracter);
@@ -34,6 +34,7 @@ public class VentanaBasico extends JDialog {
 
                 JOptionPane.showMessageDialog(this, "AFN creado con el carácter: " + caracter + " y " + caracter2+ " con E.R.: " + miAfn.E_Regular);
                 this.dispose(); // Cierra la ventana al terminar
+                
             }else if(!caracter.isEmpty() && caracter2.isEmpty()) {
                 // Aquí llamarás a tu clase de Lógica: AFN miAfn = new AFN(caracter2);
                 AFN miAfn = new AFN(caracter.charAt(0));

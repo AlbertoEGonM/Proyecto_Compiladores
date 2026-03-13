@@ -21,14 +21,17 @@ public class VentanaConvertirAFNaAFD extends JDialog {
 
         btnConvertir.addActionListener(e -> {
             AFN afnSeleccionado = AFN.getAFNByER((String) comboAfn.getSelectedItem());
+
             if(afnSeleccionado != null) {
                 AFD.afdAsignado = new AFD(afnSeleccionado);
                 // Aquí podrías mostrar el AFD resultante en una nueva ventana o guardarlo
                 JOptionPane.showMessageDialog(this, "AFN '" + comboAfn.getSelectedItem() + "' convertido a AFD con éxito." + "\nNúmero de estados en el AFD: " + AFD.afdAsignado.numEstadosSj);
+                
                 tabla.setModel(new javax.swing.table.DefaultTableModel(
                     AFD.getSumTable(),
                     AFD.CabeceraTabla()
                 ));
+                
                 tabla.setPreferredSize(getPreferredSize());
             } else {
                 JOptionPane.showMessageDialog(this, "Error al convertir el AFN seleccionado.");
