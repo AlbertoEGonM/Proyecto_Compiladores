@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
-class Nodo {
+/*class Nodo {
     int x, y;
     String etiqueta;
     static final int RADIO = 20;
@@ -53,9 +53,9 @@ class Nodo {
     public boolean contienePunto(int px, int py) {
         return Math.sqrt(Math.pow(px - x, 2) + Math.pow(py - y, 2)) <= RADIO;
     }
-}
+}*/
 
-class Arista {
+/*class Arista {
     Nodo origen, destino;
     String Simbolo;
     public Arista(Nodo origen, Nodo destino, String Simbolo) {
@@ -63,11 +63,11 @@ class Arista {
         this.destino = destino;
         this.Simbolo = Simbolo;
     }
-}
+}*/
 
 
 
-class PanelGrafo extends JPanel {
+public class PanelGrafo extends JPanel {
     private final List<Nodo> nodos;
     private final List<Arista> aristas;
     private Nodo nodoSeleccionado = null;
@@ -148,7 +148,7 @@ class PanelGrafo extends JPanel {
             if (n == nodoOrigenArista) {
                 g2.setColor(Color.ORANGE);
             } else {
-                g2.setColor(Color.CYAN);
+                g2.setColor(Color.white);
             }
             
             g2.fillOval(n.x - Nodo.RADIO, n.y - Nodo.RADIO, Nodo.RADIO * 2, Nodo.RADIO * 2);
@@ -203,7 +203,7 @@ class PanelGrafo extends JPanel {
     }
 
 }
-
+/* 
 public class GrafoInteractivo {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -230,5 +230,5 @@ public class GrafoInteractivo {
         });
     }
 }
-
+*/
 
