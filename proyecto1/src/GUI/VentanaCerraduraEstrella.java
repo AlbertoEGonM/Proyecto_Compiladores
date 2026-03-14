@@ -19,6 +19,11 @@ public class VentanaCerraduraEstrella extends JDialog {
             if(afn != null) {
                 afn.CerrKleene();
                 JOptionPane.showMessageDialog(this, "Cerradura * aplicada a: " + comboAfn.getSelectedItem() + "\nNuevo AFN: " + afn.IdAFN + "\nER: " + afn.E_Regular);
+                JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                VentanaGrafo vGrafo = new VentanaGrafo(parentFrame, afn);
+                
+                //this.dispose(); // Cerramos la ventanita de entrada
+                vGrafo.setVisible(true); // Mostramos el grafo resultante
                 this.dispose();
             }else{
                 JOptionPane.showMessageDialog(this, "Error al obtener el AFN seleccionado");

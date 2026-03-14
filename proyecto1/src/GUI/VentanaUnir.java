@@ -39,6 +39,11 @@ public class VentanaUnir extends JDialog {
                 }else{
                     afn1.UnirAFN(afn2); // Aquí llamas a tu método de unión en la clase AFN
                     JOptionPane.showMessageDialog(this, "Se unieron: " + afnA + " y " + afnB + "\nNuevo AFN con ID: " + afn1.IdAFN + " : E.R.: " + afn1.E_Regular);
+                    JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                    VentanaGrafo vGrafo = new VentanaGrafo(parentFrame, afn1);
+                    
+                    //this.dispose(); // Cerramos la ventanita de entrada
+                    vGrafo.setVisible(true); // Mostramos el grafo resultante
                     this.dispose();
                 }
                 

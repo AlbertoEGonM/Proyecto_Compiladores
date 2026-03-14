@@ -1,9 +1,9 @@
 package AFN;
 
 public class Transicion{
-    protected char Simbolo1;
-    protected char Simbolo2;
-    protected Estado EdoFinal;
+    public char Simbolo1;
+    public char Simbolo2;
+    public Estado EdoFinal;
 
     public Transicion(){
         Simbolo1 = (char)0;

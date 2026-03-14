@@ -416,7 +416,7 @@ public class AFN {
     // Metodos para obtener informacion del AFN
 
     public String[] getInfoAFN(){
-        String[] info = new String[5];
+        String[] info = new String[6];
         info[0] = this.IdAFN+ ""; // ID del AFN 
         info[1] = "" + this.E_Regular; // E. Regular del AFN
         info[2] = "" + this.Alfabeto; // Alfabeto del AFN
@@ -424,10 +424,12 @@ public class AFN {
             for(Estado e : this.EstadosAFN){
                 info[3] += (e.IdEdo)+",";
             }
-        info[3] = info[3].substring(0, info[3].length() - 1); // Elimina la ultima coma
-        info[3] += " }";
+        info[3] = info[3].substring(0, info[3].length() - 1) + " }"; // Elimina la ultima coma
         info[4] = "" + this.EdoInicial.IdEdo; // Estado Inicial del AFN
-
+        info[5] = "{ "; // Estados de aceptación
+        for(Estado e : this.EstadosAcept)
+            info[5] += e.IdEdo + ",";
+        info[5] = info[5].substring(0, info[5].length() - 1) + " }";
         return info;
     }
 
@@ -463,10 +465,10 @@ public class AFN {
 
 
     public static String[][] getAllInfoAFN(){
-        String[][] info = new String[ColeccAFNs.size()][5];
+        String[][] info = new String[ColeccAFNs.size()][6];
         int i = 0;
         for(AFN afn : ColeccAFNs){
-            System.arraycopy(afn.getInfoAFN(), 0, info[i], 0, 5);
+            System.arraycopy(afn.getInfoAFN(), 0, info[i], 0, 6);
             i++;
         }
         return info;

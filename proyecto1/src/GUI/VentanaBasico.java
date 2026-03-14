@@ -21,28 +21,52 @@ public class VentanaBasico extends JDialog {
         JButton btnCrear = new JButton("Crear AFN");
 
         btnCrear.addActionListener(e -> {
-            String caracter = txtCaracter.getText();
-            String caracter2 = txtCaracter2.getText();
-            if(caracter.length() > 1 || caracter2.length() > 1  || caracter.equals(caracter2) ) {
-                JOptionPane.showMessageDialog(this, "Los caracteres deben ser de un solo símbolo y no pueden ser iguales, o caracter 1 debe ser menor al caracter 2");
+            String c1 = txtCaracter.getText().trim();
+            String c2 = txtCaracter2.getText().trim();
+
+            txtCaracter.setText("");
+            txtCaracter2.setText("");
+
+            // Validaciones de longitud
+            if (c1.length() > 1 || c2.length() > 1) {
+                JOptionPane.showMessageDialog(this, "Solo se permite un símbolo por campo.");
                 return;
             }
-            if(!caracter.isEmpty() && !caracter2.isEmpty()) {
-                
-                // Aquí llamarás a tu clase de Lógica: AFN miAfn = new AFN(caracter);
-                AFN miAfn = new AFN(caracter.charAt(0),caracter2.charAt(0));
 
-                JOptionPane.showMessageDialog(this, "AFN creado con el carácter: " + caracter + " y " + caracter2+ " con E.R.: " + miAfn.E_Regular);
-                this.dispose(); // Cierra la ventana al terminar
-                
-            }else if(!caracter.isEmpty() && caracter2.isEmpty()) {
-                // Aquí llamarás a tu clase de Lógica: AFN miAfn = new AFN(caracter2);
-                AFN miAfn = new AFN(caracter.charAt(0));
-                JOptionPane.showMessageDialog(this, "AFN creado con el carácter: " + caracter+ " con E.R.: " + miAfn.E_Regular);
-                this.dispose(); // Cierra la ventana al terminar
+            AFN miAfn = null;
 
-            }else {
-                JOptionPane.showMessageDialog(this, "Por favor ingresa un carácter");
+            try {
+                // Caso 1: Rango o dos caracteres (Ej: 'a' y 'b' o rango 'a'-'z')
+                if (!c1.isEmpty() && !c2.isEmpty()) {
+                    if (c1.equals(c2)) {
+                        JOptionPane.showMessageDialog(this, "Los caracteres no pueden ser iguales para un rango.");
+                        return;
+                    }
+                    miAfn = new AFN(c1.charAt(0), c2.charAt(0));
+                    JOptionPane.showMessageDialog(this, "AFN (Rango) creado: " + miAfn.E_Regular);
+                } 
+                // Caso 2: Un solo carácter
+                else if (!c1.isEmpty() && c2.isEmpty()) {
+                    miAfn = new AFN(c1.charAt(0));
+                    JOptionPane.showMessageDialog(this, "AFN Básico creado: " + miAfn.E_Regular);
+                } 
+                else {
+                    JOptionPane.showMessageDialog(this, "Por favor, ingresa al menos el primer carácter.");
+                    return;
+                }
+
+                // --- AQUÍ SE IMPLEMENTA LA VISUALIZACIÓN ---
+                if (miAfn != null) {
+                    // Obtenemos el JFrame padre para que la ventana del grafo se posicione bien
+                    JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                    VentanaGrafo vGrafo = new VentanaGrafo(parentFrame, miAfn);
+                    
+                    //this.dispose(); // Cerramos la ventanita de entrada
+                    vGrafo.setVisible(true); // Mostramos el grafo resultante
+                }
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al crear el AFN: " + ex.getMessage());
             }
         });
 
