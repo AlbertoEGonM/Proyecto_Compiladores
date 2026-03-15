@@ -16,6 +16,7 @@ public class Sj {
         j = 0;
         EsFinal = false;
         Transiciones = new int[257];
+        Token = -1;
         for(int i = 0; i < 257; i++)
             Transiciones[i] = -1;
         
@@ -26,6 +27,7 @@ public class Sj {
         this.j = j;
         this.ConjuntoEdo = ConjuntoEdo;
         Transiciones = new int[257];
+        Token = -1;
         for(int i = 0; i < 257; i++)
             Transiciones[i] = -1;
         this.EstablecerEsFinal(f);

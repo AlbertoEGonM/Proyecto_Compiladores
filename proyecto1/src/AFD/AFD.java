@@ -86,21 +86,21 @@ public class AFD implements java.io.Serializable {
 		SjTemp = new Sj(NumSj++, null, F);
 		SjTemp.EsFinal = true;
 		SjTemp.Token = SimbESP.Omitir;
-		SjTemp.Transiciones[255] = SjTemp.Token;
+		SjTemp.Transiciones[256] = SjTemp.Token;
 		
 		this.numEstadosSj = NumSj;
 
 		// ImprimirAFD(R); Parte del Test: Imprime el AFD generado a partir del AFN
 
 		/* Proceso Para convertir el map R en Un arreglo Bidimensional y guardarlo en un txt */
-		TablaAFD = new int[NumSj][256];
+		TablaAFD = new int[NumSj][257];
 
-		System.arraycopy(SjTemp.Transiciones, 0, TablaAFD[NumSj-1], 0, 256);
+		System.arraycopy(SjTemp.Transiciones, 0, TablaAFD[NumSj-1], 0, 257);
 		
 		for(Sj s : R.values()){
 			for(Character O : SimbESP.SimbolosOmitir)
 				s.AgregarTransicion(SjTemp, O);
-            System.arraycopy(s.Transiciones, 0, TablaAFD[s.j], 0, 256);
+            System.arraycopy(s.Transiciones, 0, TablaAFD[s.j], 0, 257);
 		}
 
 
@@ -151,7 +151,7 @@ public class AFD implements java.io.Serializable {
 					sumTable[i][z++] = "" + afdAsignado.TablaAFD[i][j];
 				}
 			}*/
-			sumTable[i][afdAsignado.Alfabeto.size()+1+ SimbESP.SimbolosOmitir.size()] = ""+ afdAsignado.TablaAFD[i][255];
+			sumTable[i][afdAsignado.Alfabeto.size()+1+ SimbESP.SimbolosOmitir.size()] = ""+ afdAsignado.TablaAFD[i][256];
 		}
 
 		return sumTable;

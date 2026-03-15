@@ -25,7 +25,7 @@ public class VentanaGrafo extends JDialog {
 
     public VentanaGrafo(JFrame parent, AFN f) {
         super(parent, "Visualización de Grafo AFN", true);
-        setSize(600, 500); // Un poco más de espacio para autómatas grandes
+        setSize(900, 700); // Un poco más de espacio para autómatas grandes
         setLocationRelativeTo(parent);
         
         // Usamos BorderLayout para que el panel de dibujo ocupe todo el centro
@@ -64,7 +64,7 @@ public class VentanaGrafo extends JDialog {
 
 
         // Formatear los datos
-        String[] etiquetas = {"ID AFN:", "Expresión Regular:", "Alfabeto:", "Conjunto de Estados:", "Estado Inicial:", "Estados Finales"};
+        String[] etiquetas = {"ID AFN:", "Expresión Regular:", "Alfabeto:", "Conjunto de Estados:", "Estado Inicial:", "Estados Finales", "Token's"};
         
         for (int i = 0; i < info.length; i++) {
             // Etiqueta de título (Negrita)
@@ -314,7 +314,7 @@ class PanelGrafo extends JPanel {
             }
             else{
                 g2.setColor(Color.RED);
-                g2.drawString("\\epsilon", midX, midY - 5);
+                g2.drawString("ε", midX, midY - 5);
             }
         }
     }

@@ -57,20 +57,6 @@ public class AFN {
         this.CrearAFNBasico(a, b);
     }
 
-    // Constructor para crear el AFN SuperUnion, recibe una pila de AFN's a unir
-    @SuppressWarnings("OverridableMethodCallInConstructor")
-    public AFN(Stack<AFN> F){
-		Alfabeto = new HashSet<>();
-		Alfabeto.clear();
-		EstadosAFN = new HashSet<>();
-		EstadosAFN.clear();
-		EstadosAcept = new HashSet<>();
-		EstadosAcept.clear();
-		IdAFN = ContadorAFNs++;
-		
-		this.UnirAFN(F);
-}
-
 
     // AFN Basico de la forma ->(e1)-c->(e2)->
     public void CrearAFNBasico(char c){
@@ -143,28 +129,30 @@ public class AFN {
 
 
     /*  Union de varios AFN's en un SuperUnion */
-    public void UnirAFN(Stack<AFN> F){
+    public static void UnirAFN(Stack<AFN> F){
         if(F == null || F.isEmpty())
             return;
 
-        F.add(this);
+        AFN f1 = F.pop();
 
         Estado e1 = new Estado();
-		
-		this.E_Regular = '('+"";
+
+        e1.Transiciones.add(new Transicion(SimbESP.Epsilon,f1.EdoInicial));
+		f1.E_Regular = '('+f1.E_Regular+'|';
 		
 		for(AFN f: F){
 			e1.Transiciones.add(new Transicion(SimbESP.Epsilon,f.EdoInicial));
-			this.Alfabeto.addAll(f.Alfabeto);
-			this.EstadosAFN.addAll(f.EstadosAFN);
-			this.EstadosAcept.addAll(f.EstadosAcept);
-			this.E_Regular = this.E_Regular + f.E_Regular +"|";
+			f1.Alfabeto.addAll(f.Alfabeto);
+			f1.EstadosAFN.addAll(f.EstadosAFN);
+			f1.EstadosAcept.addAll(f.EstadosAcept);
+			f1.E_Regular = f1.E_Regular + f.E_Regular +"|";
 			ColeccAFNs.remove(f);
 		}
 		/* Remove last carácter in E_Regular and add a ) to close the expresion*/
-		this.E_Regular = this.E_Regular.substring(0, this.E_Regular.length() - 1) + ')'+"";
-        this.EdoInicial = e1;
-        this.EstadosAFN.add(e1);
+		f1.E_Regular = f1.E_Regular.substring(0, f1.E_Regular.length() - 1) + ')'+"";
+        f1.EdoInicial = e1;
+        f1.EstadosAFN.add(e1);
+        ColeccAFNs.add(f1);
     }
 
 
@@ -416,7 +404,7 @@ public class AFN {
     // Metodos para obtener informacion del AFN
 
     public String[] getInfoAFN(){
-        String[] info = new String[6];
+        String[] info = new String[7];
         info[0] = this.IdAFN+ ""; // ID del AFN 
         info[1] = "" + this.E_Regular; // E. Regular del AFN
         info[2] = "" + this.Alfabeto; // Alfabeto del AFN
@@ -427,9 +415,13 @@ public class AFN {
         info[3] = info[3].substring(0, info[3].length() - 1) + " }"; // Elimina la ultima coma
         info[4] = "" + this.EdoInicial.IdEdo; // Estado Inicial del AFN
         info[5] = "{ "; // Estados de aceptación
-        for(Estado e : this.EstadosAcept)
+        info[6] = "{ "; // Token's
+        for(Estado e : this.EstadosAcept){
             info[5] += e.IdEdo + ",";
+            info[6] += e.Token + ",";
+        }
         info[5] = info[5].substring(0, info[5].length() - 1) + " }";
+        info[6] = info[6].substring(0, info[6].length() - 1) + " }";
         return info;
     }
 
@@ -455,7 +447,7 @@ public class AFN {
         return null;
     }
 
-    public AFN getAFNById(int Id){
+    public static AFN getAFNById(int Id){
         for(AFN afn : ColeccAFNs){
             if(afn.IdAFN == Id)
                 return afn;
@@ -465,14 +457,25 @@ public class AFN {
 
 
     public static String[][] getAllInfoAFN(){
-        String[][] info = new String[ColeccAFNs.size()][6];
+        String[][] info = new String[ColeccAFNs.size()][7];
         int i = 0;
         for(AFN afn : ColeccAFNs){
-            System.arraycopy(afn.getInfoAFN(), 0, info[i], 0, 6);
+            System.arraycopy(afn.getInfoAFN(), 0, info[i], 0, 7);
             i++;
         }
         return info;
     }
+
+
+    public void SetToken(int Token){
+        for (Estado e : this.EstadosAcept) {
+            e.Token = Token;
+        }
+    }
+
+
+
+
 
     // Test
     public static void main(String[] args) {
