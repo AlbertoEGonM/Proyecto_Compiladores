@@ -47,7 +47,7 @@ public class Panel extends JFrame {
         
         itemAnalizarCadena.addActionListener(e -> new VentanaAnalizarCadena(this).setVisible(true));
         itemProbarLexico.addActionListener(e -> new VentanaProbarLexico(this).setVisible(true));
-        itemVentanaAFNs.addActionListener(e-> new VentanaAFNS(this).setVisible(true));
+        //itemVentanaAFNs.addActionListener(e-> new VentanaAFNS(this).setVisible(true));
 
         // Ensamblar el menú desplegable
         menuAFN.add(itemBasico);

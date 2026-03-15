@@ -5,14 +5,14 @@ import AFN.SimbESP;
 import java.util.Stack;
 
 public class AnalisisLexico {
-    private String CadenaSigma, Lexema;
     public int token;
     private int EdoActual, EdoTransicion;
-    private int IniLexema, FinLexema, IndiceCaracterActual;
+    private String CadenaSigma;
+    public String Lexema;
     private boolean PasoPorEdoAcept;
+    private int IniLexema, FinLexema, IndiceCaracterActual;
     private char CaracterActual;
-    private Stack<Integer> Pila = new Stack<>();
-    private AFD AutomataFD;
+    private Stack<Integer> Pila = new Stack<>(); 
 
     public AnalisisLexico() {
         CadenaSigma = "";
@@ -24,6 +24,7 @@ public class AnalisisLexico {
         Pila.clear();
         AutomataFD = null;
     }
+
 
     public AnalisisLexico(String sigma, String rutaAFD) {
         AutomataFD = new AFD(rutaAFD);
@@ -46,42 +47,6 @@ public class AnalisisLexico {
         Pila.clear();
     }
 
-    public void SetAutomataFD(String rutaAFD) {
-        AutomataFD = new AFD(rutaAFD);
-    }
-
-    public StatusLexico GetStatus() {
-        StatusLexico status = new StatusLexico();
-        status.setAutomataFD(AutomataFD);
-        status.setCadenaSigma(CadenaSigma);
-        status.setEdoActual(EdoActual);
-        status.setEdoTransicion(EdoTransicion);
-        status.setFinLexema(FinLexema);
-        status.setIniLexema(IniLexema);
-        status.setLexema(Lexema);
-        status.setPasoPorEdoAcept(PasoPorEdoAcept);
-        status.setToken(token);
-        status.setIndiceCaracterActual(IndiceCaracterActual);
-        status.setPila(Pila);
-        status.setCaracterActual(CaracterActual);
-        return status;
-    }
-
-    public void getStatus(StatusLexico status) {
-        AutomataFD = status.getAutomataFD();
-        CadenaSigma = status.getCadenaSigma();
-        EdoActual = status.getCaracterActual();
-        EdoTransicion = status.getCaracterActual();
-        FinLexema = status.getFinLexema();
-        IniLexema = status.getIniLexema();
-        Lexema = status.getLexema();
-        PasoPorEdoAcept = status.getPasoPorEdoAcept();
-        token = status.getToken();
-        IndiceCaracterActual = status.getCaracterActual();
-        Pila = status.getPila();
-        CaracterActual = status.getCaracterActual();
-    }
-
     public int yylex() {
         while (true) {
             Pila.push(IndiceCaracterActual); 
@@ -89,7 +54,6 @@ public class AnalisisLexico {
             if (IndiceCaracterActual >= CadenaSigma.length()) {
                 Lexema = "";
                 return SimbESP.Fin; 
-            }
 
             IniLexema = IndiceCaracterActual;
             EdoActual = 0;
@@ -100,6 +64,7 @@ public class AnalisisLexico {
             while (IndiceCaracterActual < CadenaSigma.length()) {
                 CaracterActual = CadenaSigma.charAt(IndiceCaracterActual);
                 
+
                 int c = (int) CaracterActual;
                 if (c > 255) c = 255; 
 
@@ -107,18 +72,16 @@ public class AnalisisLexico {
 
                 if (EdoTransicion != -1) {
     
-                    // 001 a
-                    // ->[0,1]->((a))
                     if (AutomataFD.TablaAFD[EdoTransicion][256] != -1) {
+                        PasoPorEdoAcept = true;
                         token = AutomataFD.TablaAFD[EdoTransicion][256];
-                        PasoPorEdoAcept = true ;
                         FinLexema = IndiceCaracterActual;
                     }
                     IndiceCaracterActual++;
                     EdoActual = EdoTransicion;
+                    continue;
                 }
-                else
-                    break;
+                break;
             }
 
 
@@ -132,8 +95,12 @@ public class AnalisisLexico {
             Lexema = CadenaSigma.substring(IniLexema, FinLexema + 1);
             IndiceCaracterActual = FinLexema + 1;
 
-            if (token != SimbESP.Omitir)
+            if (token == SimbESP.Omitir) {
+                continue;
+            } else {
                 return token;
+            }
         }
     }
+}
 }
