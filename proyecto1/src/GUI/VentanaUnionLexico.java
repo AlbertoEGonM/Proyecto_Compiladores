@@ -42,7 +42,7 @@ import javax.swing.table.DefaultTableModel;
 public class VentanaUnionLexico extends JDialog {
     public VentanaUnionLexico(JFrame parent) {
         super(parent, "Unión para Analizador Léxico", true);
-        setSize(600, 300);
+        setSize(600, 340);
         setLocationRelativeTo(parent);
         //setLayout(new BorderLayout());
 
@@ -53,8 +53,9 @@ public class VentanaUnionLexico extends JDialog {
         DefaultTableModel ModeloTabla = new DefaultTableModel(info, Columnas) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 5) return String.class;
                 if (columnIndex == 7) return Boolean.class;
-                if (columnIndex == 6) return Integer.class; // Para que valide números
+                if (columnIndex == 6) return String.class; // Para que valide números
                 return super.getColumnClass(columnIndex);
             }
 
@@ -72,14 +73,18 @@ public class VentanaUnionLexico extends JDialog {
         sp.setPreferredSize(new Dimension(500, 200));
 
         panelPrincipal.add(new JLabel("Selecciona los AFN's a Unir:"));
-        panelPrincipal.add(new JLabel("El token introducido será asignado a todos los estados finales."));
+        panelPrincipal.add(new JLabel("Para asignar los tokens deben ser escritos: \'10,20,30\'"));
+        panelPrincipal.add(new JLabel("o en caso de ser solo un int, se asigna a todos los estados finales."));
         panelPrincipal.add(sp);
-        JButton botonCapturar = new JButton("Capturar Selección >>");
+        JCheckBox unir = new JCheckBox("Selecione si se unen.");
+        panelPrincipal.add(unir);
+        JButton botonCapturar = new JButton("Capturar Selección");
         
         botonCapturar.addActionListener(e -> {
             int filas = ModeloTabla.getRowCount();
             int contados = 0;
             Stack<AFN> pila = new Stack<>();
+            Boolean SeUnen = unir.isSelected();
 
             for (int i = 0; i < filas; i++) {
                 // 1. Verificar si el Selector (Checkbox) está marcado
@@ -97,12 +102,18 @@ public class VentanaUnionLexico extends JDialog {
                             JOptionPane.showMessageDialog(this, "Por favor, asigna un token al AFN con ID: " + id);
                             return; 
                         }
-                        int token = Integer.parseInt(valorToken.toString());
+                        String[]Tokens = valorToken.toString().split(",");
+
+                        String conjEstFin = ModeloTabla.getValueAt(i, 5).toString();
+                        conjEstFin = conjEstFin.substring(2, conjEstFin.length()-2);
+                        String [] ConjuntoEFinal = conjEstFin.split(",");
+                                                
+                        // int token = Integer.parseInt(valorToken.toString());
 
                         // 4. Buscar el objeto AFN y aplicar el token
                         AFN afn = AFN.getAFNById(id); // O por ID si tienes el método
                         if (afn != null) {
-                            afn.SetToken(token);
+                            afn.SetTokens(Tokens, ConjuntoEFinal);
                             contados++;
                         }
                         pila.add(afn);
@@ -114,7 +125,7 @@ public class VentanaUnionLexico extends JDialog {
                 }
             }
 
-            if(pila.size() > 1){
+            if(pila.size() > 1 && SeUnen){
                 AFN.UnirAFN(pila);
             }
 

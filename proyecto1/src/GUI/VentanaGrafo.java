@@ -11,9 +11,11 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.awt.geom.QuadCurve2D;
 
 import AFN.AFN;
 import AFN.Estado;
+import AFD.AFD;
 import AFN.SimbESP;
 import AFN.Transicion;
 import java.util.HashMap;
@@ -33,13 +35,13 @@ public class VentanaGrafo extends JDialog {
 
         // Obtencion de las listas de nodos y aristas
         getNodosAndAristas(f);
-        String[] info = f.getInfoAFN();
+        
 
         this.setJMenuBar(BarraMenu());
 
         // Creación de paneles principales.
         PanelGrafo panelDibujo = new PanelGrafo(nodos, aristas);
-        JPanel panelInfo = crearPanelInfo(info);
+        JPanel panelInfo = crearPanelInfo(f);
         
         // 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelInfo , panelDibujo);
@@ -48,14 +50,40 @@ public class VentanaGrafo extends JDialog {
 
         add(splitPane, BorderLayout.CENTER);
         
-
-        // Opcional: Un botón para cerrar o instrucciones
-        /*JLabel lblHint = new JLabel(" Arrastra los nodos con clic izquierdo | Crea aristas manuales con clic derecho");
-        lblHint.setFont(new Font("Arial", Font.ITALIC, 12));
-        add(lblHint, BorderLayout.SOUTH);*/
     }
 
-    private JPanel crearPanelInfo(String[] info) {
+    public VentanaGrafo(JFrame parent, AFD f) {
+        super(parent, "Visualización de Grafo AFN", true);
+        setSize(900, 700); // Un poco más de espacio para autómatas grandes
+        setLocationRelativeTo(parent);
+        
+        // Usamos BorderLayout para que el panel de dibujo ocupe todo el centro
+        setLayout(new BorderLayout());
+
+        // Obtencion de las listas de nodos y aristas
+        getNodosAndAristas(f);
+        
+
+        this.setJMenuBar(BarraMenu());
+
+        // Creación de paneles principales.
+        PanelGrafo panelDibujo = new PanelGrafo(nodos, aristas);
+        JPanel panelInfo = crearPanelInfo();
+        
+        // 
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelInfo , panelDibujo);
+        splitPane.setDividerLocation(175); // Posición inicial de la división
+        splitPane.setOneTouchExpandable(true); // Flechitas para colapsar
+
+        add(splitPane, BorderLayout.CENTER);
+        
+    }
+
+    private JPanel crearPanelInfo(AFN f) {
+
+        String[] info = f.getInfoAFN();
+
+
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setBorder(BorderFactory.createTitledBorder(" Información del Autómata "));
@@ -65,6 +93,41 @@ public class VentanaGrafo extends JDialog {
 
         // Formatear los datos
         String[] etiquetas = {"ID AFN:", "Expresión Regular:", "Alfabeto:", "Conjunto de Estados:", "Estado Inicial:", "Estados Finales", "Token's"};
+        
+        for (int i = 0; i < info.length; i++) {
+            // Etiqueta de título (Negrita)
+            JLabel titulo = new JLabel(etiquetas[i]);
+            titulo.setFont(new Font("Arial", Font.BOLD, 12));
+            titulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+            
+            // Etiqueta de valor
+            // Usamos JTextArea para que el texto largo (como los estados) haga scroll o salto de línea
+            JTextArea valor = new JTextArea(info[i]);
+            valor.setEditable(false);
+            valor.setLineWrap(true);
+            valor.setWrapStyleWord(true);
+            valor.setBackground(null);
+            valor.setAlignmentX(Component.LEFT_ALIGNMENT);
+            valor.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+            p.add(titulo);
+            p.add(valor);
+        }
+
+        return p;
+    }
+
+    private JPanel crearPanelInfo(){
+        String[] info = AFD.getInfo();
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p.setBorder(BorderFactory.createTitledBorder(" Información del Autómata "));
+        p.setBackground(new Color(245, 245, 245));
+        p.setPreferredSize(new Dimension(300, 0));
+
+
+        // Formatear los datos
+        String[] etiquetas = {"Expresión Regular:", "Alfabeto:", "Numero de Estados:", "Token's por estado"};
         
         for (int i = 0; i < info.length; i++) {
             // Etiqueta de título (Negrita)
@@ -166,6 +229,42 @@ public class VentanaGrafo extends JDialog {
             }
         }
     }
+
+    private void getNodosAndAristas(AFD F){
+        nodos.clear();
+        aristas.clear();
+        
+        // Espaciado inicial
+        int xBase = 100;
+        int yBase = 200;
+
+        for (int i = 0; i < F.numEstadosSj-1; i++) {
+            Nodo nodEv = new Nodo("S"+i , xBase, yBase);
+            nodos.add(nodEv);
+            
+            // Distribuir nodos horizontalmente
+            xBase += 150; 
+            // Si hay muchos, bajamos a la siguiente fila
+            if (xBase > 800) { xBase = 100; yBase += 150; }
+        }
+
+        Arista aristaAux = null;
+        int i = 0, aux = -1;
+        for(Nodo nodev : nodos){
+            for(char c : F.Alfabeto){
+                if(F.TablaAFD[i][c] != -1){
+                    aux = F.TablaAFD[i][c];
+                    aristaAux = Arista.MismaDirecion(nodev, nodos.get(aux), aristas);
+                    if(aristaAux != null){
+                        aristaAux.Simbolo += ", "+ c;
+                    }else{
+                        aristas.add(new Arista(nodev, nodos.get(aux), ""+c));
+                    }
+                }
+            }
+            i++;
+        }
+    }
 }
 
 class PanelGrafo extends JPanel {
@@ -191,15 +290,15 @@ class PanelGrafo extends JPanel {
                             nodoSeleccionado = n;
                         } 
                         // CLIC DERECHO: Crear Arista
-                        /*else if (SwingUtilities.isRightMouseButton(e)) {
+                        else if (SwingUtilities.isRightMouseButton(e)) {
                             if (nodoOrigenArista == null) {
                                 nodoOrigenArista = n; // Primer nodo seleccionado
                             } else {
                                 // Segundo nodo seleccionado: crear arista
-                                aristas.add(new Arista(nodoOrigenArista, n));
+                                
                                 nodoOrigenArista = null; 
                             }
-                        }*/
+                        }
                         repaint();
                         return;
                     }
@@ -276,47 +375,72 @@ class PanelGrafo extends JPanel {
         int x2 = a.destino.x;
         int y2 = a.destino.y;
 
-        // Calcular el ángulo de la línea
         double angulo = Math.atan2(y2 - y1, x2 - x1);
-
-        // Ajustar el punto de destino para que la flecha toque el BORDE del nodo
-        // (Restamos el RADIO del nodo en la dirección del ángulo)
-        int destinoX = (int) (x2 - Nodo.RADIO * Math.cos(angulo));
-        int destinoY = (int) (y2 - Nodo.RADIO * Math.sin(angulo));
-
-        // Dibujar la línea principal
-        
-        if(a.Simbolo.charAt(0) != SimbESP.Epsilon )
-            g2.setColor(Color.BLACK);
-        else
-            g2.setColor(Color.RED);
         g2.setStroke(new BasicStroke(2f));
-        g2.drawLine(x1, y1, destinoX, destinoY);
-
-        // Dibujar la punta de la flecha
-        int largoFlecha = 12;
-        double anguloFlecha = Math.toRadians(25);
-        int xP1 = (int) (destinoX - largoFlecha * Math.cos(angulo - anguloFlecha));
-        int yP1 = (int) (destinoY - largoFlecha * Math.sin(angulo - anguloFlecha));
-        int xP2 = (int) (destinoX - largoFlecha * Math.cos(angulo + anguloFlecha));
-        int yP2 = (int) (destinoY - largoFlecha * Math.sin(angulo + anguloFlecha));
         
-        g2.drawLine(destinoX, destinoY, xP1, yP1);
-        g2.drawLine(destinoX, destinoY, xP2, yP2);
+        // Configurar color según Símbolo (Epsilon o normal)
+        if (a.Simbolo.charAt(0) != SimbESP.Epsilon) g2.setColor(Color.BLACK);
+        else g2.setColor(Color.RED);
 
-        // Dibujar el símbolo (alfabeto) en el punto medio
-        if (a.Simbolo != null) {
-            int midX = (x1 + destinoX) / 2;
-            int midY = (y1 + destinoY) / 2;
-            if(a.Simbolo.charAt(0) != SimbESP.Epsilon ){
-                g2.setColor(Color.BLACK);
-                g2.drawString(a.Simbolo, midX, midY - 5);
-            }
-            else{
-                g2.setColor(Color.RED);
-                g2.drawString("ε", midX, midY - 5);
-            }
+        // 2. DETECTAR SOBRELAPE
+        if (Arista.Sobrelapa(a.origen, a.destino, aristas)) {
+            // Calculamos un punto de control desplazado perpendicularmente a la línea
+            // Esto crea el efecto de "arco"
+            /*double dist = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));*/
+            int curvaOffset = 30; // Qué tan pronunciada es la curva
+
+            // Punto medio
+            double mx = (x1 + x2) / 2.0;
+            double my = (y1 + y2) / 2.0;
+
+            // Punto de control (perpendicular)
+            double ctrlX = mx + curvaOffset * Math.sin(angulo);
+            double ctrlY = my - curvaOffset * Math.cos(angulo);
+
+            /*// Dibujar curva
+            QuadCurve2D curva = new QuadCurve2D.Float(x1, y1, (float)ctrlX, (float)ctrlY, x2, y2);*/
+            
+            // Calcular punto de contacto en el borde del nodo destino para la flecha
+            // En una curva, el ángulo de entrada cambia, usamos el punto de control
+            double anguloFinal = Math.atan2(y2 - ctrlY, x2 - ctrlX);
+            int destX = (int) (x2 - Nodo.RADIO * Math.cos(anguloFinal));
+            int destY = (int) (y2 - Nodo.RADIO * Math.sin(anguloFinal));
+
+            g2.draw(new QuadCurve2D.Float(x1, y1, (float)ctrlX, (float)ctrlY, destX, destY));
+            
+            // Dibujar punta de flecha con el nuevo ángulo
+            dibujarPuntaFlecha(g2, destX, destY, anguloFinal);
+
+            // Dibujar símbolo sobre el punto de control
+            String texto = a.Simbolo.charAt(0) == SimbESP.Epsilon ? "ε" : a.Simbolo;
+            g2.drawString(texto, (int)ctrlX, (int)ctrlY);
+
+        } else {
+            // 3. Caso normal (Línea recta - tu código actual)
+            int destX = (int) (x2 - Nodo.RADIO * Math.cos(angulo));
+            int destY = (int) (y2 - Nodo.RADIO * Math.sin(angulo));
+            
+            g2.drawLine(x1, y1, destX, destY);
+            dibujarPuntaFlecha(g2, destX, destY, angulo);
+
+            // Símbolo en punto medio
+            int midX = (x1 + destX) / 2;
+            int midY = (y1 + destY) / 2;
+            String texto = a.Simbolo.charAt(0) == SimbESP.Epsilon ? "ε" : a.Simbolo;
+            g2.drawString(texto, midX, midY - 5);
         }
+    }
+
+    // Método auxiliar para no repetir código de flechas
+    private void dibujarPuntaFlecha(Graphics2D g2, int x, int y, double angulo) {
+        int largo = 12;
+        double apertura = Math.toRadians(25);
+        int xP1 = (int) (x - largo * Math.cos(angulo - apertura));
+        int yP1 = (int) (y - largo * Math.sin(angulo - apertura));
+        int xP2 = (int) (x - largo * Math.cos(angulo + apertura));
+        int yP2 = (int) (y - largo * Math.sin(angulo + apertura));
+        g2.drawLine(x, y, xP1, yP1);
+        g2.drawLine(x, y, xP2, yP2);
     }
 
     public void exportarImagen(String nombreArchivo) {
@@ -355,6 +479,22 @@ class Arista {
         this.origen = origen;
         this.destino = destino;
         this.Simbolo = Simbolo;
+    }
+
+    protected static Arista MismaDirecion(Nodo Origen, Nodo Destino, List<Arista> aristas){
+        for (Arista A : aristas) {
+            if(A.origen.equals(Origen) && A.destino.equals(Destino))
+                return A;
+        }
+        return null;
+    }
+
+    protected static Boolean Sobrelapa(Nodo Origen, Nodo Destino, List<Arista> aristas){
+        for (Arista A : aristas){
+            if(A.origen.equals(Destino) && A.destino.equals(Origen))
+                return true;
+        }
+        return false;
     }
 }
 

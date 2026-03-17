@@ -1,6 +1,9 @@
 package GUI;
 
+import java.io.File;
+
 import javax.swing.*;
+import AFD.AFD;
 
 public class Panel extends JFrame {
 
@@ -13,6 +16,7 @@ public class Panel extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu menuAFN = new JMenu("AFN's");
         JMenu menuSintactico = new JMenu("Analisis Sintáctico");
+        JMenu menuAFD = new JMenu("AFD's");
         /*JPanel panelPrincipal = new JPanel();
         panelPrincipal.setLayout(new BorderLayout());*/
 
@@ -28,6 +32,7 @@ public class Panel extends JFrame {
         JMenuItem itemAnalizarCadena = new JMenuItem("Analizar una Cadena");
         JMenuItem itemProbarLexico = new JMenuItem("Probar analizador Léxico");
         JMenuItem itemVentanaAFNs = new JMenuItem("Mostrar AFNs");
+        JMenuItem itemMostrarAFD = new JMenuItem("Mostrar AFD");
 
         // --- CONEXIÓN DE TODAS LAS VENTANAS ---
         // Nota: Para que este archivo compile sin errores, deberás crear 
@@ -47,7 +52,9 @@ public class Panel extends JFrame {
         
         itemAnalizarCadena.addActionListener(e -> new VentanaAnalizarCadena(this).setVisible(true));
         itemProbarLexico.addActionListener(e -> new VentanaProbarLexico(this).setVisible(true));
-        //itemVentanaAFNs.addActionListener(e-> new VentanaAFNS(this).setVisible(true));
+        itemVentanaAFNs.addActionListener(e-> new VentanaAFNS(this).setVisible(true));
+
+        itemMostrarAFD.addActionListener(e-> {if(AFD.afdAsignado != null){new VentanaGrafo(this, AFD.afdAsignado).setVisible(true);}});
 
         // Ensamblar el menú desplegable
         menuAFN.add(itemBasico);
@@ -65,10 +72,86 @@ public class Panel extends JFrame {
         menuAFN.add(itemProbarLexico);
         menuAFN.add(itemVentanaAFNs);
 
+        // Acciones del menu AFD
+        menuAFD.add(GuardarAFD());
+        menuAFD.add(CargarAFD());
+        menuAFD.add(itemMostrarAFD);
+
         menuBar.add(menuAFN);
+        menuBar.add(menuAFD);
         menuBar.add(menuSintactico);
         setJMenuBar(menuBar);
     }
+
+    // Acción de Guardar AFD en forma de Bin
+    private JMenuItem GuardarAFD(){
+        JMenuItem GuardarAFd = new JMenuItem("Guardar AFD en bin");
+        
+        GuardarAFd.addActionListener(e->{
+            if(AFD.afdAsignado != null){
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Guardar AFD");
+                
+                // Filtrar para mostrar solo archivos .png
+                //FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes PNG (*.png)", "png");
+                //fileChooser.setFileFilter(filter);
+                
+                int userSelection = fileChooser.showSaveDialog(Panel.this);
+                
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    String filePath = fileToSave.getAbsolutePath();
+                    
+                    // Asegurar que el archivo termine en .png
+                    /*if (!filePath.toLowerCase().endsWith(".png")) {
+                        filePath += ".png";
+                    }*/
+                    
+                    // *** LLAMAR AL MÉTODO DE EXPORTADO DEL PANEL ***
+                    AFD.afdAsignado.GuardarArchivoBin(filePath);
+                }
+            }
+        });
+
+        return GuardarAFd;
+    }
+
+    private JMenuItem CargarAFD(){
+        JMenuItem CargarAFD = new JMenuItem("Cargar AFD de un Bin");
+        CargarAFD.addActionListener(e->{
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Cargar AFD");
+            
+            // Filtrar para mostrar solo archivos .png
+            //FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes PNG (*.png)", "png");
+            //fileChooser.setFileFilter(filter);
+            
+            int userSelection = fileChooser.showSaveDialog(Panel.this);
+            
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToCharge = fileChooser.getSelectedFile();
+                String filePath = fileToCharge.getAbsolutePath();
+                
+                // Asegurar que el archivo termine en .png
+                /*if (!filePath.toLowerCase().endsWith(".png")) {
+                    filePath += ".png";
+                }*/
+
+                if(!fileToCharge.exists() || !fileToCharge.canRead()){
+                    JOptionPane.showMessageDialog(this, "No se puede leer el archivo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                    
+                
+                // *** LLAMAR AL MÉTODO DE EXPORTADO DEL PANEL ***
+                AFD.afdAsignado = AFD.AbrirArchivoBin(filePath);
+            }
+
+        });
+
+        return CargarAFD;
+    }
+
 
     public static void main(String[] args) {
         /*SwingUtilities.invokeLater(() -> {
