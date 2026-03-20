@@ -416,10 +416,10 @@ public class AFN {
         info[4] = "" + this.EdoInicial.IdEdo; // Estado Inicial del AFN
         info[5] = "{ "; // Estados de aceptación
         info[6] = "{ "; // Token's
-        for(Estado e : this.EstadosAcept){
-            info[5] += e.IdEdo + ",";
-            info[6] += e.Token + ",";
-        }
+            for(Estado e : this.EstadosAcept){
+                info[5] += e.IdEdo + ",";
+                info[6] += e.Token + ",";
+            }
         info[5] = info[5].substring(0, info[5].length() - 1) + " }";
         info[6] = info[6].substring(0, info[6].length() - 1) + " }";
         return info;
@@ -471,6 +471,32 @@ public class AFN {
         for (Estado e : this.EstadosAcept) {
             e.Token = Token;
         }
+    }
+
+    public void SetTokens(String[] Tokens , String[] ConjuntoEstadosFin){
+        int largo = (Tokens.length < ConjuntoEstadosFin.length) ? Tokens.length : ConjuntoEstadosFin.length;
+        if(Tokens.length <= 1){
+            int Tok = Integer.parseInt(Tokens[0]);
+            for (Estado E : this.EstadosAcept) {
+                E.Token = Tok;
+            }
+        }else{
+            Estado e = null;
+            for (int i = 0; i < largo; i++) {
+                e = SearchEstadoFinal(Integer.parseInt(ConjuntoEstadosFin[i]));
+                if(e != null){
+                    e.Token = Integer.parseInt(Tokens[i]);
+                }
+            }
+        }
+    }
+
+    private Estado SearchEstadoFinal(int id){
+        for (Estado e : this.EstadosAcept) {
+            if(e.IdEdo == id)
+                return e;
+        }
+        return null;
     }
 
 

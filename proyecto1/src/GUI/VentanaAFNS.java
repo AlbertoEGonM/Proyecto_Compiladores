@@ -2,9 +2,6 @@ package GUI;
 
 import AFN.AFN;
 import java.awt.*;
-import java.util.Stack;
-
-import javax.print.DocFlavor.STRING;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -35,7 +32,7 @@ public class VentanaAFNS extends JDialog {
 
         panelPrincipal.add(new JLabel("Selecciona El AFN a visualizar"));
         panelPrincipal.add(sp);
-        JButton botonCapturar = new JButton("Capturar Selección >>");
+        JButton botonCapturar = new JButton("Mostrar");
         
         botonCapturar.addActionListener(e -> {
             int filas = ModeloTabla.getRowCount();

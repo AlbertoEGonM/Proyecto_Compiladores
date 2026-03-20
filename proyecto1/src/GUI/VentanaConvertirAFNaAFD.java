@@ -8,13 +8,16 @@ import javax.swing.*;
 public class VentanaConvertirAFNaAFD extends JDialog {
     public VentanaConvertirAFNaAFD(JFrame parent) {
         super(parent, "Convertir AFN a AFD", true);
-        setSize(600, 550);
+        setSize(900, 750);
         setLocationRelativeTo(parent);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 
         JTable tabla = new JTable();
+
         tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        JScrollPane sp = new JScrollPane(tabla);  
+        tabla.setPreferredScrollableViewportSize(new Dimension(800, 600));
+        JScrollPane sp = new JScrollPane(tabla);
+        sp.setPreferredSize(new Dimension(800, 600));
 
         JComboBox<String> comboAfn = new JComboBox<>(AFN.getAllERegular());
         JButton btnConvertir = new JButton("Convertir a AFD");
