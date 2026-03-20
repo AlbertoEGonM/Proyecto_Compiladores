@@ -84,7 +84,6 @@ public class VentanaUnionLexico extends JDialog {
             int filas = ModeloTabla.getRowCount();
             int contados = 0;
             Stack<AFN> pila = new Stack<>();
-            Boolean SeUnen = unir.isSelected();
 
             for (int i = 0; i < filas; i++) {
                 // 1. Verificar si el Selector (Checkbox) está marcado
@@ -111,7 +110,7 @@ public class VentanaUnionLexico extends JDialog {
                         // int token = Integer.parseInt(valorToken.toString());
 
                         // 4. Buscar el objeto AFN y aplicar el token
-                        AFN afn = AFN.getAFNById(id); // O por ID si tienes el método
+                        AFN afn = AFN.getAFNById(id);
                         if (afn != null) {
                             afn.SetTokens(Tokens, ConjuntoEFinal);
                             contados++;
@@ -125,7 +124,7 @@ public class VentanaUnionLexico extends JDialog {
                 }
             }
 
-            if(pila.size() > 1 && SeUnen){
+            if(pila.size() > 1 && unir.isSelected()){
                 AFN.UnirAFN(pila);
             }
 

@@ -27,7 +27,7 @@ public class VentanaGrafo extends JDialog {
 
     public VentanaGrafo(JFrame parent, AFN f) {
         super(parent, "Visualización de Grafo AFN", true);
-        setSize(900, 700); // Un poco más de espacio para autómatas grandes
+        setSize(1000, 700); // Un poco más de espacio para autómatas grandes
         setLocationRelativeTo(parent);
         
         // Usamos BorderLayout para que el panel de dibujo ocupe todo el centro
@@ -54,7 +54,7 @@ public class VentanaGrafo extends JDialog {
 
     public VentanaGrafo(JFrame parent, AFD f) {
         super(parent, "Visualización de Grafo AFN", true);
-        setSize(900, 700); // Un poco más de espacio para autómatas grandes
+        setSize(1000, 700); // Un poco más de espacio para autómatas grandes
         setLocationRelativeTo(parent);
         
         // Usamos BorderLayout para que el panel de dibujo ocupe todo el centro
@@ -273,6 +273,9 @@ class PanelGrafo extends JPanel {
     public List<Arista> aristas = new ArrayList<>();
     public Nodo nodoSeleccionado = null;
     public Nodo nodoOrigenArista = null; // Nodo para crear aristas
+    private int offsetX = 0; // Desplazamiento horizontal acumulado
+    private int offsetY = 0; // Desplazamiento vertical acumulado
+    private Point puntoPresionado;
 
     public PanelGrafo(List<Nodo> nodos, List<Arista> aristas) {
         this.nodos = nodos;
@@ -281,39 +284,23 @@ class PanelGrafo extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                puntoPresionado = e.getPoint(); // Guardar posición inicial del click
+                
                 boolean clickEnNodo = false;
                 for (Nodo n : nodos) {
-                    if (n.contienePunto(e.getX(), e.getY())) {
+                    // Ajustamos las coordenadas de detección restando el offset
+                    if (n.contienePunto(e.getX() - offsetX, e.getY() - offsetY)) {
                         clickEnNodo = true;
-                        // CLIC IZQUIERDO: Seleccionar para arrastrar
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             nodoSeleccionado = n;
-                        } 
-                        // CLIC DERECHO: Crear Arista
-                        else if (SwingUtilities.isRightMouseButton(e)) {
-                            if (nodoOrigenArista == null) {
-                                nodoOrigenArista = n; // Primer nodo seleccionado
-                            } else {
-                                // Segundo nodo seleccionado: crear arista
-                                
-                                nodoOrigenArista = null; 
-                            }
                         }
                         repaint();
                         return;
                     }
                 }
-                
-                // Si haces clic en el vacío, cancelamos la selección de arista
                 if (!clickEnNodo) {
-                    nodoOrigenArista = null;
-                    repaint();
+                    nodoSeleccionado = null;
                 }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                nodoSeleccionado = null;
             }
         });
 
@@ -321,10 +308,22 @@ class PanelGrafo extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (nodoSeleccionado != null) {
-                    nodoSeleccionado.x = e.getX();
-                    nodoSeleccionado.y = e.getY();
-                    repaint();
+                    // Mover nodo: el ratón se mueve, restamos el offset para que el nodo 
+                    // siga al puntero correctamente en un lienzo desplazado
+                    nodoSeleccionado.x = e.getX() - offsetX;
+                    nodoSeleccionado.y = e.getY() - offsetY;
+                } else {
+                    // MOVER EL LIENZO (Panning)
+                    // Calculamos cuánto se movió el ratón desde el punto inicial
+                    int deltaX = e.getX() - puntoPresionado.x;
+                    int deltaY = e.getY() - puntoPresionado.y;
+
+                    offsetX += deltaX;
+                    offsetY += deltaY;
+
+                    puntoPresionado = e.getPoint(); // Actualizar para el siguiente frame
                 }
+                repaint();
             }
         });
     }
@@ -334,6 +333,8 @@ class PanelGrafo extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2.translate(offsetX, offsetY);
 
         // DIBUJAR ARISTAS
         for (Arista a : aristas) {
@@ -352,6 +353,8 @@ class PanelGrafo extends JPanel {
             FontMetrics fm = g2.getFontMetrics();
             g2.drawString(n.etiqueta, n.x - fm.stringWidth(n.etiqueta)/2, n.y + 5);
         }
+        // Al final, es buena práctica resetear la traslación si vas a dibujar algo estático (como un HUD)
+        g2.translate(-offsetX, -offsetY);
     }
 
     private void dibujarTransicion(Graphics2D g2, Arista a) {

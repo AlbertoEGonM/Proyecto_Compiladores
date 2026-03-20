@@ -3,6 +3,8 @@ package GUI;
 import java.io.File;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import AFD.AFD;
 
 public class Panel extends JFrame {
@@ -54,7 +56,7 @@ public class Panel extends JFrame {
         itemProbarLexico.addActionListener(e -> new VentanaProbarLexico(this).setVisible(true));
         itemVentanaAFNs.addActionListener(e-> new VentanaAFNS(this).setVisible(true));
 
-        itemMostrarAFD.addActionListener(e-> {if(AFD.afdAsignado != null){new VentanaGrafo(this, AFD.afdAsignado).setVisible(true);}});
+        itemMostrarAFD.addActionListener(e-> {if(AFD.afdAsignado != null){new VentanaGrafo(this, AFD.afdAsignado).setVisible(AFD.afdAsignado != null);}});
 
         // Ensamblar el menú desplegable
         menuAFN.add(itemBasico);
@@ -92,9 +94,9 @@ public class Panel extends JFrame {
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Guardar AFD");
                 
-                // Filtrar para mostrar solo archivos .png
-                //FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes PNG (*.png)", "png");
-                //fileChooser.setFileFilter(filter);
+                // Filtrar para mostrar solo archivos .afnd
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos bin, AFD (*.afnd)", "afnd");
+                fileChooser.setFileFilter(filter);
                 
                 int userSelection = fileChooser.showSaveDialog(Panel.this);
                 
@@ -102,12 +104,11 @@ public class Panel extends JFrame {
                     File fileToSave = fileChooser.getSelectedFile();
                     String filePath = fileToSave.getAbsolutePath();
                     
-                    // Asegurar que el archivo termine en .png
-                    /*if (!filePath.toLowerCase().endsWith(".png")) {
-                        filePath += ".png";
-                    }*/
+                    // Asegurar que el archivo termine en .afnd
+                    if (!filePath.toLowerCase().endsWith(".afnd")) {
+                        filePath += ".afnd";
+                    }
                     
-                    // *** LLAMAR AL MÉTODO DE EXPORTADO DEL PANEL ***
                     AFD.afdAsignado.GuardarArchivoBin(filePath);
                 }
             }
@@ -123,8 +124,8 @@ public class Panel extends JFrame {
             fileChooser.setDialogTitle("Cargar AFD");
             
             // Filtrar para mostrar solo archivos .png
-            //FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes PNG (*.png)", "png");
-            //fileChooser.setFileFilter(filter);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos bin, AFD (*.afnd)", "afnd");
+            fileChooser.setFileFilter(filter);
             
             int userSelection = fileChooser.showSaveDialog(Panel.this);
             
@@ -132,18 +133,16 @@ public class Panel extends JFrame {
                 File fileToCharge = fileChooser.getSelectedFile();
                 String filePath = fileToCharge.getAbsolutePath();
                 
-                // Asegurar que el archivo termine en .png
-                /*if (!filePath.toLowerCase().endsWith(".png")) {
-                    filePath += ".png";
-                }*/
+                // Asegurar que el archivo termine en .afnd
+                if (!filePath.toLowerCase().endsWith(".afnd")) {
+                    filePath += ".afnd";
+                }
 
                 if(!fileToCharge.exists() || !fileToCharge.canRead()){
                     JOptionPane.showMessageDialog(this, "No se puede leer el archivo.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                     
-                
-                // *** LLAMAR AL MÉTODO DE EXPORTADO DEL PANEL ***
                 AFD.afdAsignado = AFD.AbrirArchivoBin(filePath);
             }
 

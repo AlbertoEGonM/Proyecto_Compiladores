@@ -92,7 +92,7 @@ public class AFD implements java.io.Serializable {
 
 		// ImprimirAFD(R); Parte del Test: Imprime el AFD generado a partir del AFN
 
-		/* Proceso Para convertir el map R en Un arreglo Bidimensional y guardarlo en un txt */
+		/* Proceso Para convertir el map R en Un arreglo Bidimensional y guardarlo en un Bin */
 		TablaAFD = new int[NumSj][257];
 
 		System.arraycopy(SjTemp.Transiciones, 0, TablaAFD[NumSj-1], 0, 257);
@@ -137,9 +137,9 @@ public class AFD implements java.io.Serializable {
 		info[2] = ""+(afdAsignado.numEstadosSj +1);
 		
 		info[3] = "{ ";
-		for(int i = 0; i < afdAsignado.numEstadosSj; i ++){
+		for(int i = 0; i < afdAsignado.numEstadosSj-1; i ++){
 			if(afdAsignado.TablaAFD[i][256] != -1 || afdAsignado.TablaAFD[i][256] != SimbESP.Omitir )
-				info[3] += "S" + i + "= " + afdAsignado.TablaAFD[i][256] + ",";
+				info[3] += "S" + i + "=" + afdAsignado.TablaAFD[i][256] + ",";
 		}
 		info[3] = info[3].substring(0, info[3].length() - 1) + " }";
 
