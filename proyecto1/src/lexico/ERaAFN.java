@@ -1,6 +1,5 @@
 package lexico;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import AFN.AFN;
@@ -58,9 +57,10 @@ public class ERaAFN {
 
     // T->CT'
     private boolean T(AFN f){
-        if(C(f))
+        return (C(f) ? Tp(f) : false);
+        /*if(C(f))
             return Tp(f);
-        return false;
+        return false;*/
     }
 
     // T'->CT' | \epsilon (Concatenación)
