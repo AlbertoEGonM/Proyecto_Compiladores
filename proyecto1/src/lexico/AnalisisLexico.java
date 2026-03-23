@@ -63,6 +63,10 @@ public class AnalisisLexico {
         AutomataFD = F;
     }
 
+    public String CadenaAnalizar(){
+        return CadenaSigma.substring(IndiceCaracterActual,CadenaSigma.length());
+    }
+
     public int yylex() {
         while (true) {
             Pila.push(IndiceCaracterActual); 
@@ -95,9 +99,8 @@ public class AnalisisLexico {
                     }
                     IndiceCaracterActual++;
                     EdoActual = EdoTransicion;
-                    continue;
-                }
-                break;
+                }else
+                    break;
             }
 
 
@@ -111,12 +114,19 @@ public class AnalisisLexico {
             Lexema = CadenaSigma.substring(IniLexema, FinLexema + 1);
             IndiceCaracterActual = FinLexema + 1;
 
-            if (token == SimbESP.Omitir) {
-                continue;
-            } else {
+            if (token != SimbESP.Omitir) {
                 return token;
             }
         }
+    }
+
+    
+
+    public void UndoToken(){
+        if(Pila.empty()){
+            return;
+        }
+        IndiceCaracterActual = Pila.pop();
     }
 
     public String[][] AnalisisSimple(){
@@ -131,6 +141,9 @@ public class AnalisisLexico {
             Auxiliar.add(""+Token);
             Table.add(Auxiliar);
             /*System.out.println("Aquí vamos en el " + z + " Tok "+ Token + " Lexema " + Lexema);
+            if(Lexema.contains("\\"))
+                System.out.println(Lexema.charAt(0) + " :: " + Lexema.charAt(1));
+            
             z++;*/
         }while(Token != SimbESP.Fin);
 
@@ -142,5 +155,43 @@ public class AnalisisLexico {
         return TablaTokenLex;
     } 
 
+    //  Set and Get
+    public int getIniLexema(){return IniLexema;}
 
+    public int getFinlexema(){return FinLexema;}
+
+    public int getInidiceCA(){return IndiceCaracterActual;}
+
+    public int getToken(){return token;}
+
+    public int getEdoActual(){return EdoActual;}
+
+    public int getEdoTransicion(){return EdoTransicion;}
+
+    public String getCadenaSigma(){return CadenaSigma;}
+
+    public String getLexema(){return Lexema;}
+
+    public boolean getPasoPorEstadoAcept(){return PasoPorEdoAcept;}
+
+    public char getCaracterActual(){return CaracterActual;}
+
+    public Stack<Integer> getPila(){return Pila;}
+    
+    public AFD getAFD(){return AutomataFD;}
+
+    public void SetStatus(StatusLexico e){
+        IniLexema = e.getIniLexema();
+        FinLexema = e.getFinLexema();
+        IndiceCaracterActual = e.getIndiceCaracterActual();
+        token = e.getToken();
+        EdoActual = e.getEdoActual();
+        EdoTransicion = e.getEdoTransicion();
+        CadenaSigma = e.getCadenaSigma();
+        Lexema = e.getLexema();
+        PasoPorEdoAcept = e.getPasoPorEdoAcept();
+        CaracterActual = e.getCaracterActual();
+        Pila = e.getPila();
+        AutomataFD = e.getAutomataFD();
+    }
 }

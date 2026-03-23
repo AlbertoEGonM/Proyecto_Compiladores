@@ -4,12 +4,12 @@ import AFD.AFD;
 import java.util.Stack;
 
 public class StatusLexico {    
+    private int IniLexema, FinLexema, IndiceCaracterActual;
     public int token;
     private int EdoActual, EdoTransicion;
     private String CadenaSigma;
     public String Lexema;
     private boolean PasoPorEdoAcept;
-    private int IniLexema, FinLexema, IndiceCaracterActual;
     private char CaracterActual;
     private Stack<Integer> Pila = new Stack<>();
     private AFD AutomataFD;
@@ -28,101 +28,72 @@ public class StatusLexico {
         this.Pila = new Stack<>();
     }
 
-    // setters y getters
-
-    public void setToken(int token){
-        this.token = token;
+    public StatusLexico(AnalisisLexico A){
+        this.token = A.getToken();
+        this.EdoActual = A.getEdoActual();
+        this.EdoTransicion = A.getEdoTransicion();
+        this.CadenaSigma = A.getCadenaSigma();
+        this.Lexema = A.getLexema();
+        this.PasoPorEdoAcept = A.getPasoPorEstadoAcept();
+        this.IniLexema = A.getIniLexema();
+        this.FinLexema = A.getFinlexema();
+        this.IndiceCaracterActual = A.getInidiceCA();
+        this.CaracterActual = A.getCaracterActual();
+        this.Pila = A.getPila();
+        this.AutomataFD = A.getAFD();
     }
 
-    public void setEdoActual(int EdoActual){
-        this.EdoActual = EdoActual;
-    }
+    //  *    setters y getters  *
 
-    public void setEdoTransicion(int EdoTransicion){
-        this.EdoTransicion = EdoTransicion;
-    }
+    // set
 
-    public void setCadenaSigma(String CadenaSigma){
-        this.CadenaSigma = CadenaSigma;
-    }
+    public void setToken(int token){this.token = token;}
 
-    public void setLexema(String Lexema){
-        this.Lexema = Lexema;
-    }
+    public void setEdoActual(int EdoActual){this.EdoActual = EdoActual;}
 
-    public void setPasoPorEdoAcept(boolean PasoPorEdoAcept){
-        this.PasoPorEdoAcept = PasoPorEdoAcept;
-    }
+    public void setEdoTransicion(int EdoTransicion){this.EdoTransicion = EdoTransicion;}
 
-    public void setIniLexema(int IniLexema){
-        this.IniLexema = IniLexema;
-    }
+    public void setCadenaSigma(String CadenaSigma){this.CadenaSigma = CadenaSigma;}
 
-    public void setFinLexema(int FinLexema){
-        this.FinLexema = FinLexema;
-    }
+    public void setLexema(String Lexema){this.Lexema = Lexema;}
 
-    public void setIndiceCaracterActual(int IndiceCaracterActual){
-        this.IndiceCaracterActual = IndiceCaracterActual;
-    }
+    public void setPasoPorEdoAcept(boolean PasoPorEdoAcept){this.PasoPorEdoAcept = PasoPorEdoAcept;}
 
-    public void setCaracterActual(char CaracterActual){
-        this.CaracterActual = CaracterActual;
-    }
+    public void setIniLexema(int IniLexema){this.IniLexema = IniLexema;}
 
-    public void setPila(Stack<Integer> Pila){
-        this.Pila = Pila;
-    }
+    public void setFinLexema(int FinLexema){this.FinLexema = FinLexema;}
 
-    public void setAutomataFD(AFD AutomataFD){
-        this.AutomataFD = AutomataFD;
-    }
+    public void setIndiceCaracterActual(int IndiceCaracterActual){this.IndiceCaracterActual = IndiceCaracterActual;}
 
-    public int getToken(){
-        return this.token;
-    }
+    public void setCaracterActual(char CaracterActual){this.CaracterActual = CaracterActual;}
 
-    public int getEdoActual(){
-        return this.EdoActual;
-    }
+    public void setPila(Stack<Integer> Pila){this.Pila = Pila;}
 
-    public int getEdoTransicion(){
-        return this.EdoTransicion;
-    }
+    public void setAutomataFD(AFD AutomataFD){this.AutomataFD = AutomataFD;}
 
-    public String getCadenaSigma(){
-        return this.CadenaSigma;
-    }
+    // get
 
-    public String getLexema(){
-        return this.Lexema;
-    }
+    public int getToken(){return this.token;}
 
-    public boolean getPasoPorEdoAcept(){
-        return this.PasoPorEdoAcept;
-    }
+    public int getEdoActual(){return this.EdoActual;}
 
-    public int getIniLexema(){
-        return this.IniLexema;
-    }
+    public int getEdoTransicion(){return this.EdoTransicion;}
 
-    public int getFinLexema(){
-        return this.FinLexema;
-    }
+    public String getCadenaSigma(){return this.CadenaSigma;}
 
-    public int getIndiceCaracterActual(){
-        return this.IndiceCaracterActual;
-    }
+    public String getLexema(){return this.Lexema;}
 
-    public char getCaracterActual(){
-        return this.CaracterActual;
-    }
+    public boolean getPasoPorEdoAcept(){return this.PasoPorEdoAcept;}
 
-    public Stack<Integer> getPila(){
-        return this.Pila;
-    }
+    public int getIniLexema(){return this.IniLexema;}
 
-    public AFD getAutomataFD(){
-        return this.AutomataFD;
-    }
+    public int getFinLexema(){return this.FinLexema;}
+
+    public int getIndiceCaracterActual(){return this.IndiceCaracterActual;}
+
+    public char getCaracterActual(){return this.CaracterActual;}
+
+    public Stack<Integer> getPila(){return this.Pila;}
+
+    public AFD getAutomataFD(){return this.AutomataFD;}
 }

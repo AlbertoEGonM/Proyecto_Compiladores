@@ -3,6 +3,9 @@ package GUI;
 import java.awt.*;
 import javax.swing.*;
 
+import AFN.AFN;
+import lexico.ERaAFN;
+
 public class VentanaERaAFN extends JDialog {
 
     public VentanaERaAFN(JFrame parent) {
@@ -19,7 +22,13 @@ public class VentanaERaAFN extends JDialog {
         btnConvertir.addActionListener(e -> {
             String er = txtExpresion.getText();
             // Lógica para evaluar la ER
-            JOptionPane.showMessageDialog(this, "Convirtiendo la expresión: " + er);
+
+            AFN f = new AFN();
+
+            new ERaAFN(er,f);
+            
+
+            JOptionPane.showMessageDialog(this, "Convirtiendo, expresión resultante: " + f.E_Regular);
             this.dispose();
         });
 

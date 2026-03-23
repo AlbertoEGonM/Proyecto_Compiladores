@@ -26,14 +26,12 @@ public class VentanaProbarLexico extends JDialog {
 
 
         btnProbar.addActionListener(e -> {
-            String Sigma = txtCodigo.getText();
-
-            JOptionPane.showMessageDialog(this, "Procesando el texto ingresado para obtener Tokens..." + Sigma + "\n" + Sigma.length());
+            JOptionPane.showMessageDialog(this, "Procesando el texto ingresado para obtener Tokens...");
             
             AnalisisLexico A = new AnalisisLexico(txtCodigo.getText(),AFD.afdAsignado);
 
             tabla.setModel(new javax.swing.table.DefaultTableModel(A.AnalisisSimple(),new String[] {"Sigma","Token"}));
-            tabla.setPreferredSize(getPreferredSize());
+            //tabla.setPreferredSize(getPreferredSize());
         });
 
         JPanel panelSuperior = new JPanel();
