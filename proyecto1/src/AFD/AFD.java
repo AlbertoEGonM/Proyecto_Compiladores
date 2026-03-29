@@ -83,11 +83,13 @@ public class AFD implements java.io.Serializable {
 
 		// Estado de simbolos omitir.
 
-		SjTemp = new Sj(NumSj++, null, F);
+		/*SjTemp = new Sj(NumSj++, null, F);
 		SjTemp.EsFinal = true;
 		SjTemp.Token = SimbESP.Omitir;
 		SjTemp.Transiciones[256] = SjTemp.Token;
-		
+		for(Character O : SimbESP.SimbolosOmitir)
+			SjTemp.AgregarTransicion(SjTemp, O);
+		*/
 		this.numEstadosSj = NumSj;
 
 		// ImprimirAFD(R); Parte del Test: Imprime el AFD generado a partir del AFN
@@ -95,11 +97,13 @@ public class AFD implements java.io.Serializable {
 		/* Proceso Para convertir el map R en Un arreglo Bidimensional y guardarlo en un Bin */
 		TablaAFD = new int[NumSj][257];
 
-		System.arraycopy(SjTemp.Transiciones, 0, TablaAFD[NumSj-1], 0, 257);
+		//System.arraycopy(SjTemp.Transiciones, 0, TablaAFD[NumSj-1], 0, 257);
 		
 		for(Sj s : R.values()){
-			for(Character O : SimbESP.SimbolosOmitir)
+			/*if(s.j == 0){
+				for(Character O : SimbESP.SimbolosOmitir)
 				s.AgregarTransicion(SjTemp, O);
+			}*/
             System.arraycopy(s.Transiciones, 0, TablaAFD[s.j], 0, 257);
 		}
 

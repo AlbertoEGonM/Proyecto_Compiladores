@@ -238,7 +238,7 @@ public class VentanaGrafo extends JDialog {
         int xBase = 100;
         int yBase = 200;
 
-        for (int i = 0; i < F.numEstadosSj-1; i++) {
+        for (int i = 0; i < F.numEstadosSj; i++) {
             Nodo nodEv = new Nodo("S"+i , xBase, yBase);
             nodos.add(nodEv);
             

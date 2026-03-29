@@ -26,7 +26,7 @@ public class ERaAFN {
     public ERaAFN(String sigma, AFN F){
         //Path AFDpath = Paths.get("proyecto1\\src\\lexico\\AFD_ER.afnd"); 
         // System.out.println(AFDpath.toAbsolutePath().toString());
-        Lexic = new AnalisisLexico(sigma,Paths.get("proyecto1\\src\\lexico\\AFD_ER.afnd").toAbsolutePath().toString());
+        Lexic = new AnalisisLexico(sigma,Paths.get("proyecto1\\src\\lexico\\afdER1.afnd").toAbsolutePath().toString());
         E(F);
     }
 
@@ -111,10 +111,10 @@ public class ERaAFN {
     private boolean F(AFN f){
         switch (Lexic.yylex()) { // get token
             case ParIzq: // (E)
-                if(E(f)){
+                /*if(E(f)){
                     return Lexic.yylex() == ParDer;
-                }
-                break;
+                }*/
+                return (E(f) ? Lexic.yylex() == ParDer : false);
             
             case Simb: // Simb
                 f.CrearAFNBasico((Lexic.Lexema.contains("\\") ? Lexic.Lexema.charAt(1) : Lexic.Lexema.charAt(0)));

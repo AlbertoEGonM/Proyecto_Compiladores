@@ -20,16 +20,14 @@ public class VentanaERaAFN extends JDialog {
         JButton btnConvertir = new JButton("Convertir");
 
         btnConvertir.addActionListener(e -> {
-            String er = txtExpresion.getText();
             // Lógica para evaluar la ER
 
             AFN f = new AFN();
 
-            new ERaAFN(er,f);
-            
-
+            new ERaAFN(txtExpresion.getText(),f);
+            txtExpresion.setText("");
+            //f.E_Regular = er;
             JOptionPane.showMessageDialog(this, "Convirtiendo, expresión resultante: " + f.E_Regular);
-            this.dispose();
         });
 
         add(label);

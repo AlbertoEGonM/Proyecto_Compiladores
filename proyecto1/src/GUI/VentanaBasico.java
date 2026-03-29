@@ -21,8 +21,8 @@ public class VentanaBasico extends JDialog {
         JButton btnCrear = new JButton("Crear AFN");
 
         btnCrear.addActionListener(e -> {
-            String c1 = txtCaracter.getText().trim();
-            String c2 = txtCaracter2.getText().trim();
+            String c1 = txtCaracter.getText();
+            String c2 = txtCaracter2.getText();
 
             txtCaracter.setText("");
             txtCaracter2.setText("");

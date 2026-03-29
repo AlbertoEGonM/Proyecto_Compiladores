@@ -169,7 +169,7 @@ public class AFN {
         F2.EstadosAFN.remove(F2.EdoInicial); //Eliminamos el estado inicial de F2 (pierde importancia en el AFN final)
         // Confio en el Recolector de Java
 
-        this.E_Regular = "("+this.E_Regular+"°"+F2.E_Regular+")"; // EJ. ([a,z] ° 5)
+        this.E_Regular = "("+this.E_Regular+F2.E_Regular+")"; // EJ. ([a,z] ° 5)
         this.Alfabeto.addAll(F2.Alfabeto); // Unimos todo el Alfabeto de AFN1 y 2
         this.EstadosAFN.addAll(F2.EstadosAFN); // Contamos todos los Estados del AFN1 y 2
 
