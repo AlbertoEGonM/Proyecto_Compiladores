@@ -1,30 +1,28 @@
 package lexico;
 
-import java.nio.file.Paths;
-
 import AFN.AFN;
-
+import java.nio.file.Paths;
 
 public class ERaAFN {
 
     // Tokens
-    private static final int Union = 10; // |
-    private static final int CerrPos = 20; // +
-    private static final int CerrKln = 30; // '*
-    private static final int CerrOp = 40; // '?
-    private static final int ParIzq = 50; // (
-    private static final int ParDer = 60; // )
-    private static final int CorchIzq = 70; // [
-    private static final int CorchDer = 80; // ]
-    private static final int Guion = 90; // -
-    private static final int Simb = 100; // [a-z]|[A-Z]|[0-9]|\°(...)
+    private static final int UNION = 10; // |
+    private static final int CERRPOS = 20; // +
+    private static final int CERRKLN = 30; // '*
+    private static final int CERROP = 40; // '?
+    private static final int PARIZQ = 50; // (
+    private static final int PARDER = 60; // )
+    private static final int CORCHIZQ = 70; // [
+    private static final int CORCHDER = 80; // ]
+    private static final int GUION = 90; // -
+    private static final int SIMB = 100; // [a-z]|[A-Z]|[0-9]|\°(...)
 
     // Analizador
-    private AnalisisLexico Lexic;
+    private final AnalisisLexico Lexic;
 
-//D:\\ARchivos\\JAVA\\Compilador\\Proyecto_Compiladores\\proyecto1\\src\\lexico
+    //D:\\ARchivos\\JAVA\\Compilador\\Proyecto_Compiladores\\proyecto1\\src\\lexico
     public ERaAFN(String sigma, AFN F){
-        //Path AFDpath = Paths.get("proyecto1\\src\\lexico\\AFD_ER.afnd"); 
+        // Path AFDpath = Paths.get("proyecto1\\src\\lexico\\AFD_ER.afnd"); 
         // System.out.println(AFDpath.toAbsolutePath().toString());
         Lexic = new AnalisisLexico(sigma,Paths.get("proyecto1\\src\\lexico\\afdER1.afnd").toAbsolutePath().toString());
         E(F);
@@ -42,7 +40,7 @@ public class ERaAFN {
 
     // E'-> or TE' | \epsilon :: (or = '|')
     private boolean Ep(AFN f){
-        if(Lexic.yylex() == Union){ // or TE'
+        if(Lexic.yylex() == UNION){ // or TE'
             AFN f1 = new AFN();
             if(T(f1)){ 
                 f.UnirAFN(f1);
@@ -88,52 +86,76 @@ public class ERaAFN {
 
     // C'-> +C'|*C'|?C'|\epsilon (Cerraduras)
     private boolean Cp(AFN f){
+        return switch (Lexic.yylex()) {
+            case CERRPOS->{ // +C'
+                f.CerrPositiva();
+                yield Cp(f);
+            }
+            case CERRKLN->{ // '*'C?
+                f.CerrKleene();
+                yield Cp(f);
+            }
+            case CERROP->{ // '?'C'
+                f.CerrOpcional();
+                yield  Cp(f);
+            }
+            default->{  // \epsilon
+                Lexic.UndoToken();
+                yield true;
+            }
+        };
+    }
+
+    /*
+    private boolean Cp(AFN f){
         switch (Lexic.yylex()) {
-            case CerrPos: // +C'
+            case CERRPOS: // +C'
                 f.CerrPositiva();
                 return Cp(f);
     
-            case CerrKln: // '*'C?
+            case CERRKLN: // '*'C?
                 f.CerrKleene();;
                 return Cp(f);
 
-            case CerrOp: // '?'C'
+            case CERROP: // '?'C'
                 f.CerrOpcional();
                 return Cp(f);
         }
+        
         
         // \epsilon
         Lexic.UndoToken();
         return true;
     }
+    */
 
     // F->(E)|Simb|[Simb-Simb]
     private boolean F(AFN f){
-        switch (Lexic.yylex()) { // get token
-            case ParIzq: // (E)
+        return switch (Lexic.yylex()) { // get token
+            case PARIZQ-> (E(f) ? Lexic.yylex() == PARDER : false); // (E)
                 /*if(E(f)){
                     return Lexic.yylex() == ParDer;
                 }*/
-                return (E(f) ? Lexic.yylex() == ParDer : false);
             
-            case Simb: // Simb
+            case SIMB->{ // Simb
                 f.CrearAFNBasico((Lexic.Lexema.contains("\\") ? Lexic.Lexema.charAt(1) : Lexic.Lexema.charAt(0)));
-                return true;
-
-            case CorchIzq: //[Simb-Simb]
-                if(Lexic.yylex() != Simb) return false;
+                yield true;
+            }
+            case CORCHIZQ->{ //[Simb-Simb]
+                if(Lexic.yylex() != SIMB) yield false;
                 char simb1 = (Lexic.Lexema.contains("\\") ? Lexic.Lexema.charAt(1) : Lexic.Lexema.charAt(0));
                 
-                if(Lexic.yylex() != Guion) return false;
-                if(Lexic.yylex() != Simb) return false;
+                if(Lexic.yylex() != GUION) yield false;
+                if(Lexic.yylex() != SIMB) yield false;
                 char simb2 = (Lexic.Lexema.contains("\\") ? Lexic.Lexema.charAt(1) : Lexic.Lexema.charAt(0));
 
-                if(Lexic.yylex() != CorchDer) return false;
+                if(Lexic.yylex() != CORCHDER) yield false;
 
                 f.CrearAFNBasico(simb1,simb2);
-                return true;
-        }
-        return false;
+                yield true;
+            }
+            default-> false;
+        };
     }
 
 }
