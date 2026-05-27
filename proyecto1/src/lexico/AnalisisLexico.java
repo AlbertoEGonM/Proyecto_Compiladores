@@ -2,7 +2,6 @@ package lexico;
 
 import AFD.AFD;
 import AFN.SimbESP;
-
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -36,7 +35,6 @@ public class AnalisisLexico {
         FinLexema = -1;
         IndiceCaracterActual = 0;
         token = -1;
-        Pila.clear();
     }
     public AnalisisLexico(String sigma, AFD F) {
         AutomataFD = F;
@@ -46,7 +44,6 @@ public class AnalisisLexico {
         FinLexema = -1;
         IndiceCaracterActual = 0;
         token = -1;
-        Pila.clear();
     }
 
     public void SetSigma(String sigma) {
@@ -56,7 +53,6 @@ public class AnalisisLexico {
         FinLexema = -1;
         IndiceCaracterActual = 0;
         token = -1;
-        Pila.clear();
     }
 
     public void SetAFD(AFD F){
@@ -132,7 +128,7 @@ public class AnalisisLexico {
     public String[][] AnalisisSimple(){
         ArrayList<ArrayList<String>> Table = new ArrayList<>();
         ArrayList<String> Auxiliar;
-        int Token = -1;
+        int Token;
         //int z = 0;
         do{
             Auxiliar = new ArrayList<>();
@@ -150,7 +146,7 @@ public class AnalisisLexico {
         String[][] TablaTokenLex = new String[Table.size()][2];
         for(int i=0; i<Table.size();i++){
             Auxiliar = Table.get(i);
-            TablaTokenLex[i] = Auxiliar.toArray(new String[0]);
+            TablaTokenLex[i] = Auxiliar.toArray(String[]::new);
         }
         return TablaTokenLex;
     } 

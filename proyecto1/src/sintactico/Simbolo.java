@@ -1,8 +1,7 @@
 package sintactico;
 
-import java.util.Objects;
-
 import AFN.SimbESP;
+import java.util.Objects;
 
 public class Simbolo {
     public static Simbolo SimbEPS = new Simbolo(){{
@@ -19,6 +18,13 @@ public class Simbolo {
 
     public String Nombre;
     public boolean Terminal;
+
+    public Simbolo(){}
+
+    public Simbolo(String Nombre, boolean Terminal){
+        this.Nombre = Nombre;
+        this.Terminal = Terminal;
+    }
 
     @Override
     public boolean equals(Object o) {
