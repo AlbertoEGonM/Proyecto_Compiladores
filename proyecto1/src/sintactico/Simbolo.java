@@ -1,17 +1,16 @@
 package sintactico;
 
-import AFN.SimbESP;
 import java.util.Objects;
 
 public class Simbolo {
-    public static Simbolo SimbEPS = new Simbolo(){{
-            this.Nombre = String.valueOf(SimbESP.Epsilon);
+    public static Simbolo SimbEPS = new Simbolo(){{ // Su token asociado debe ser el dado en SimbESP.Epsilon
+            this.Nombre = "epsilon";
             this.Terminal = true;
         }};
 
-    public static Simbolo SimboloFinal = new Simbolo(){
+    public static Simbolo SimboloFinal = new Simbolo(){ // Su token asociado debe ser el dado en SimbESP.SimboloFinal
         {
-            this.Nombre = String.valueOf(SimbESP.Fin);
+            this.Nombre = String.valueOf('$');
             this.Terminal = true;
         }
     };

@@ -14,14 +14,14 @@ public class Gramatica {
     public List<LadoIzq> Reglas = new LinkedList<>();;
     public Set<Simbolo> SimbolosTerminales = new HashSet<>();;
     public Set<Simbolo> SimbolosNoTerminales = new HashSet<>();;
-    public Map<String,Set<Simbolo>> FirmMap = new HashMap<>();
-    public Map<String,Set<Simbolo>> FollMap = new HashMap<>();
+    public Map<Simbolo,Set<Simbolo>> FirmMap = new HashMap<>();
+    public Map<Simbolo,Set<Simbolo>> FollMap = new HashMap<>();
 
     public Gramatica(String input) {
         DescensoRecursivo DS = new DescensoRecursivo(this , input);
         DS.getHello();
         this.SimbolosTerminales.add(Simbolo.SimboloFinal);
-        this.SimbolosTerminales.remove(Simbolo.SimbEPS);
+        //this.SimbolosTerminales.remove(Simbolo.SimbEPS);
     }
 
     public void AumentarGramatica(){
@@ -40,19 +40,19 @@ public class Gramatica {
         if(L == null) 
             return java.util.Collections.emptySet();
         
-        if(FirmMap.containsKey(L.Nombre)) 
-            return FirmMap.get(L.Nombre);
+        if(FirmMap.containsKey(L)) 
+            return FirmMap.get(L);
 
         if(L.Terminal)
             return Set.of(L);
         
-        FirmMap.put(L.Nombre, java.util.Collections.emptySet());
+        FirmMap.put(L, java.util.Collections.emptySet());
         
         Set<Simbolo> C = new HashSet<>();
         for (LadoIzq Regla : this.Reglas)
             if(L.Nombre.equals(Regla.SimboloIzq.Nombre)) C.addAll(First(Regla.Simbolos));
         
-        FirmMap.put(L.Nombre, C);
+        FirmMap.put(L, C);
         return  C;
     }
 
@@ -74,15 +74,15 @@ public class Gramatica {
     }
 
     public Set<Simbolo> Follow(Simbolo A){
-        if(FollMap.containsKey(A.Nombre)) 
-            return FollMap.get(A.Nombre);
+        if(FollMap.containsKey(A)) 
+            return FollMap.get(A);
 
         Set<Simbolo> C = new HashSet<>();
         
         if(A.Terminal) 
             return C;
 
-        FollMap.put(A.Nombre, java.util.Collections.emptySet());
+        FollMap.put(A, java.util.Collections.emptySet());
 
         if(Reglas.get(0).SimboloIzq.equals(A)) 
             C.add(Simbolo.SimboloFinal); // Simbolo $
@@ -115,7 +115,7 @@ public class Gramatica {
             }
         }
 
-        FollMap.put(A.Nombre, C);
+        FollMap.put(A, C);
 
         return C;
     }

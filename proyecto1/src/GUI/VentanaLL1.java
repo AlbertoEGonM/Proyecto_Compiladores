@@ -28,10 +28,18 @@ public class VentanaLL1 extends JDialog {
     
     private final JTable tablaTerminales;
 
-    // Entidades lógicas de tu backend
+    // Entidades lógicas backend
     private AFD afdCargado = null;
     private Gramatica gramaticaProcesada = null;
     private List<Simbolo> listaTerminalesActuales = new ArrayList<>();
+
+    // String ejemplo de gramatica
+    private final String Ejemplo = """
+                                    E->T E';
+                                    E'-> + T E' | -T E' | epsilon;
+                                    T-> F T';
+                                    T'-> * F T' | / F T' | epsilon;
+                                    F-> (E)| num;""";
 
     public VentanaLL1(JFrame parent) {
         super(parent,"Analizador Sintáctico LL(1) - Interfaz Gráfica",true);
@@ -49,7 +57,7 @@ public class VentanaLL1 extends JDialog {
         txtGramatica = new JTextArea(8, 50);
         txtGramatica.setFont(new Font("Monospaced", Font.PLAIN, 13));
         // Gramática muestra de ejemplo inicial tal como solicitaste
-        txtGramatica.setText("E->A + B|C;\nA->B-C|D;"); 
+        txtGramatica.setText(Ejemplo); 
         JScrollPane spGramatica = new JScrollPane(txtGramatica);
         
         JPanel panelSigmaYAFD = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
@@ -171,7 +179,7 @@ public class VentanaLL1 extends JDialog {
      * extrayendo automáticamente el conjunto 'SimbolosTerminales' resultante del parser recursivo.
      */
     private void extraerTerminalesDeGramatica() {
-        String textoGramatica = txtGramatica.getText().trim();
+        String textoGramatica = txtGramatica.getText();
         if (textoGramatica.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor introduzca las reglas de la gramática textual primero.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
