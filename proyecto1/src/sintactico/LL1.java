@@ -139,6 +139,7 @@ public class LL1 {
             return tablaHistorial;
         }
 
+
         // 1. Inicializar Pila Sintáctica
         Stack<Simbolo> pilaSintactica = new Stack<>();
         pilaSintactica.push(Simbolo.SimboloFinal); // $
@@ -146,14 +147,16 @@ public class LL1 {
         if (Gram.Reglas.isEmpty()) return tablaHistorial;
         pilaSintactica.push(Gram.Reglas.get(0).SimboloIzq); // Símbolo inicial
 
+        String estadoPila;
+
         // 2. Control del token actual
         int tokenActual = Lex.yylex(); 
 
         // Bucle de reconocimiento
         while (!pilaSintactica.isEmpty()) {
             // --- CAPTURA DE ESTADO (Pila y Entrada) ---
-            String estadoPila = mapearPilaAString(pilaSintactica);
-            String entradaRestante = Lex.CadenaAnalizar(); 
+            estadoPila = mapearPilaAString(pilaSintactica);
+            String entradaRestante = Lex.Lexema + Lex.CadenaAnalizar(); 
             if (entradaRestante.isEmpty()) {
                 entradaRestante = "$";
             }
@@ -166,7 +169,7 @@ public class LL1 {
 
                 if (tokenDeX == tokenActual) {
                     // Registrar acción Match
-                    historial.add(new FilaProcesoLL1(estadoPila, entradaRestante, "Match '" + X.Nombre + "'"));
+                    historial.add(new FilaProcesoLL1(estadoPila, entradaRestante, "pop '" + X.Nombre + "'"));
                     
                     pilaSintactica.pop();
                     if (tokenActual != SimbESP.Fin) {
@@ -234,6 +237,50 @@ public class LL1 {
         return tablaHistorial;
     }
 
+    public String[][] getVt(){
+        String[][] tablaVnt = new String[2][VT[0].length+1];
+        tablaVnt[0][0] = "";
+        tablaVnt[1][0] = "";
+        for(Simbolo Simb : Gram.SimbolosTerminales){
+            int idx = ObtenerColumna(Simb)+1;
+            tablaVnt[0][idx] = Simb.Nombre;
+            tablaVnt[1][idx] = String.valueOf(VT[0][idx-1]);
+        }
+
+        return tablaVnt;
+    }
+
+    public String[] getVNT(){
+        String[] tablaVT = new String[VNT.length];
+        for(Simbolo Simb : Gram.SimbolosNoTerminales){
+            int idx = ObtenerIndice(Simb);
+            tablaVT[idx] = Simb.Nombre;
+        }
+        return tablaVT;
+    }
+
+    public String[][] getTablaLL(){
+        String[][] tablaCompleta = new String[TablaLL.length][TablaLL[0].length+1];
+        String[] tablaVnt = getVNT();
+
+        for (int i = 0; i < tablaCompleta.length; i++){
+            tablaCompleta[i][0] = tablaVnt[i];
+
+            for (int j = 0; j < TablaLL[0].length; j++) {
+                int valorRegla = TablaLL[i][j];
+                if (valorRegla == -1) {
+                    tablaCompleta[i][j + 1] = ""; // O puedes poner "-" para que sea visualmente claro
+                } else {
+                    // Parseo rápido de int a String, desplazado una posición a la derecha (j + 1)
+                    tablaCompleta[i][j + 1] = String.valueOf(valorRegla);
+                }   
+            }
+        }
+
+        return tablaCompleta;
+    }   
+    
+
 }
 
 
@@ -255,9 +302,9 @@ class FilaProcesoLL1 {
 
     public String[] getArray(){
         String[] FilaArray = new String[3];
-        FilaArray[1] = pila;
-        FilaArray[2] = entradaRestante;
-        FilaArray[3] = accion;
+        FilaArray[0] = pila;
+        FilaArray[1] = entradaRestante;
+        FilaArray[2] = accion;
         return FilaArray;
     }
 

@@ -3,12 +3,12 @@ package sintactico;
 import java.util.Objects;
 
 public class Simbolo {
-    public static Simbolo SimbEPS = new Simbolo(){{ // Su token asociado debe ser el dado en SimbESP.Epsilon
+    public static Simbolo SimbEPS = new Simbolo(){{ // Su token asociado debe ser el dado en SimbESP.Epsilon = 5
             this.Nombre = "epsilon";
             this.Terminal = true;
         }};
 
-    public static Simbolo SimboloFinal = new Simbolo(){ // Su token asociado debe ser el dado en SimbESP.SimboloFinal
+    public static Simbolo SimboloFinal = new Simbolo(){ // Su token asociado debe ser el dado en SimbESP.SimboloFinal = 0
         {
             this.Nombre = String.valueOf('$');
             this.Terminal = true;

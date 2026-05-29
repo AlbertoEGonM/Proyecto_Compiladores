@@ -1,18 +1,17 @@
 package GUI;
 
 import AFD.AFD;
-import lexico.AnalisisLexico;
-import sintactico.LL1;
-import sintactico.Gramatica;
-import sintactico.Simbolo;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import lexico.AnalisisLexico;
+import sintactico.Gramatica;
+import sintactico.LL1;
+import sintactico.Simbolo;
 
 public class VentanaLL1 extends JDialog {
 
@@ -25,13 +24,16 @@ public class VentanaLL1 extends JDialog {
     private final DefaultTableModel modeloLexico;
     private final DefaultTableModel modeloTerminales;
     private final DefaultTableModel modeloLL1;
-    
+    private final DefaultTableModel modeloTablaLL;
+
     private final JTable tablaTerminales;
+    private final JTable tablaMatrizLL1;
 
     // Entidades lógicas backend
     private AFD afdCargado = null;
     private Gramatica gramaticaProcesada = null;
     private List<Simbolo> listaTerminalesActuales = new ArrayList<>();
+    private LL1 analizadorLL1;
 
     // String ejemplo de gramatica
     private final String Ejemplo = """
@@ -107,14 +109,30 @@ public class VentanaLL1 extends JDialog {
         panelLexico.add(panelBotonesLexico, BorderLayout.SOUTH);
         pestañasProceso.addTab("Resultado Análisis Léxico", panelLexico);
 
-        // Pestaña III: Tabla de Rastreo Sintáctico LL(1)
+        // III
+        JPanel panelTablaMatriz = new JPanel(new BorderLayout(5, 5));
+        // Inicializamos el modelo vacío para evitar NullPointerException al arranque
+        modeloTablaLL = new DefaultTableModel(); 
+        tablaMatrizLL1 = new JTable(this.modeloTablaLL);
+        //this.tablaMatrizLL1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        panelTablaMatriz.add(new JScrollPane(tablaMatrizLL1), BorderLayout.CENTER);
+
+        JPanel panelBotonTablaLL = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton btnTablaLL1 = new JButton("3. Calcular TablaLL1");
+        btnTablaLL1.addActionListener(e-> obtenerTablas());
+        panelBotonTablaLL.add(btnTablaLL1);
+        panelTablaMatriz.add(panelBotonTablaLL,BorderLayout.SOUTH);
+        pestañasProceso.addTab("Matriz Predictiva LL(1)", panelTablaMatriz);
+
+
+        // Pestaña IV: Tabla de Rastreo Sintáctico LL(1)
         JPanel panelLL1 = new JPanel(new BorderLayout(5, 5));
         modeloLL1 = new DefaultTableModel(new String[]{"Pila", "Entrada Restante", "Acción / Regla Aplicada"}, 0);
         JTable tablaLL1 = new JTable(modeloLL1);
         panelLL1.add(new JScrollPane(tablaLL1), BorderLayout.CENTER);
         
         JPanel panelBotonesLL1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton btnAnalisisLL1 = new JButton("3. Ejecutar Análisis Sintáctico LL(1)");
+        JButton btnAnalisisLL1 = new JButton("4. Ejecutar Análisis Sintáctico LL(1)");
         btnAnalisisLL1.addActionListener(e -> ejecutarAnalisisSintacticoLL1());
         panelBotonesLL1.add(btnAnalisisLL1);
         panelLL1.add(panelBotonesLL1, BorderLayout.SOUTH);
@@ -232,24 +250,15 @@ public class VentanaLL1 extends JDialog {
         }
     }
 
-    /**
-     * Acción 3: Recolecta los tokens enteros digitados manualmente por el usuario,
-     * configura las matrices VT/VNT de la clase LL1 y ejecuta el análisis sintáctico.
-     */
-    private void ejecutarAnalisisSintacticoLL1() {
+    private void obtenerTablas(){
         if (gramaticaProcesada == null) {
             JOptionPane.showMessageDialog(this, "Primero debe ejecutar el análisis y extracción de la gramática (Paso 1).", "Error de Flujo", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (afdCargado == null) {
-            JOptionPane.showMessageDialog(this, "Falta cargar el AFD binario para el control léxico.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (modeloTerminales.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "No existen símbolos terminales sobre los cuales evaluar.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         // Forzar a Swing a detener la edición de cualquier celda activa (asegura que el último token escrito se guarde)
         if (tablaTerminales.getCellEditor() != null) {
             tablaTerminales.getCellEditor().stopCellEditing();
@@ -276,12 +285,10 @@ public class VentanaLL1 extends JDialog {
             return;
         }
 
-        modeloLL1.setRowCount(0);
-
         try {
             // Instanciar el analizador sintáctico LL1 enviándole la gramática y el análisis léxico actual
             AnalisisLexico lexicoSintax = new AnalisisLexico(txtSigma.getText(), afdCargado);
-            LL1 analizadorLL1 = new LL1(gramaticaProcesada, lexicoSintax);
+            analizadorLL1 = new LL1(gramaticaProcesada, lexicoSintax);
 
             // Ejecutar los métodos de inicialización obligatorios presentes en tu clase LL1.java
             boolean vtConstruido = analizadorLL1.CreateVT(simbolosAsociados, tokensManuales);
@@ -293,6 +300,41 @@ public class VentanaLL1 extends JDialog {
             analizadorLL1.CreateVNT();
             analizadorLL1.init_Table(); // Genera la matriz predictiva TablaLL
 
+        } catch (HeadlessException ex) {
+            JOptionPane.showMessageDialog(this, "Error durante la ejecución del algoritmo LL(1):\n" + ex.getMessage(), "Error Sintáctico", JOptionPane.ERROR_MESSAGE);
+        }
+
+        modeloTablaLL.setDataVector(analizadorLL1.getTablaLL(), analizadorLL1.getVt()[0]);
+
+        
+    }
+
+    /**
+     * Acción 3: Recolecta los tokens enteros digitados manualmente por el usuario,
+     * configura las matrices VT/VNT de la clase LL1 y ejecuta el análisis sintáctico.
+     */
+    private void ejecutarAnalisisSintacticoLL1() {
+        if (gramaticaProcesada == null) {
+            JOptionPane.showMessageDialog(this, "Primero debe ejecutar el análisis y extracción de la gramática (Paso 1).", "Error de Flujo", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (afdCargado == null) {
+            JOptionPane.showMessageDialog(this, "Falta cargar el AFD binario para el control léxico.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (modeloTerminales.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "No existen símbolos terminales sobre los cuales evaluar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Forzar a Swing a detener la edición de cualquier celda activa (asegura que el último token escrito se guarde)
+        if (tablaTerminales.getCellEditor() != null) {
+            tablaTerminales.getCellEditor().stopCellEditing();
+        }
+
+        modeloLL1.setRowCount(0);
+
+        try {
             // Ejecutar el motor sintáctico y obtener el rastro de la matriz de transiciones
             String[][] registrosProceso = analizadorLL1.AnalizarYRegistrar();
 
