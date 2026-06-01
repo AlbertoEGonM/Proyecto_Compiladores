@@ -9,11 +9,11 @@ import java.util.Stack;
 import lexico.AnalisisLexico;
 
 public class LL1 {
-    AnalisisLexico Lex;
-    Gramatica Gram;
-    int[][] TablaLL;
-    int[][] VT;
-    int[] VNT;
+    private AnalisisLexico Lex;
+    private Gramatica Gram;
+    private int[][] TablaLL;
+    private int[][] VT;
+    private int[] VNT;
 
 
     public LL1(){
@@ -238,25 +238,25 @@ public class LL1 {
     }
 
     public String[][] getVt(){
-        String[][] tablaVnt = new String[2][VT[0].length+1];
-        tablaVnt[0][0] = "";
-        tablaVnt[1][0] = "";
+        String[][] tablaVT = new String[2][VT[0].length+1];
+        tablaVT[0][0] = "";
+        tablaVT[1][0] = "";
         for(Simbolo Simb : Gram.SimbolosTerminales){
             int idx = ObtenerColumna(Simb)+1;
-            tablaVnt[0][idx] = Simb.Nombre;
-            tablaVnt[1][idx] = String.valueOf(VT[0][idx-1]);
+            tablaVT[0][idx] = Simb.Nombre;
+            tablaVT[1][idx] = String.valueOf(VT[0][idx-1]);
         }
 
-        return tablaVnt;
+        return tablaVT;
     }
 
     public String[] getVNT(){
-        String[] tablaVT = new String[VNT.length];
+        String[] tablaVnT = new String[VNT.length];
         for(Simbolo Simb : Gram.SimbolosNoTerminales){
             int idx = ObtenerIndice(Simb);
-            tablaVT[idx] = Simb.Nombre;
+            tablaVnT[idx] = Simb.Nombre;
         }
-        return tablaVT;
+        return tablaVnT;
     }
 
     public String[][] getTablaLL(){
@@ -280,7 +280,13 @@ public class LL1 {
         return tablaCompleta;
     }   
     
+    public void setSigma(String Sigma){this.Lex.SetSigma(Sigma);}
 
+    public void setGramatica(Gramatica Grama){this.Gram = Grama;}
+
+    public void setLexico(AnalisisLexico LEx){this.Lex = LEx;}
+
+    public void setLexico(String ruta, String sig){this.Lex = new AnalisisLexico(sig, ruta);}
 }
 
 

@@ -17,6 +17,8 @@ public class Gramatica {
     public Map<Simbolo,Set<Simbolo>> FirmMap = new HashMap<>();
     public Map<Simbolo,Set<Simbolo>> FollMap = new HashMap<>();
 
+    public Gramatica(){}
+
     public Gramatica(String input) {
         DescensoRecursivo DS = new DescensoRecursivo(this , input);
         DS.getHello();
@@ -118,6 +120,16 @@ public class Gramatica {
         FollMap.put(A, C);
 
         return C;
+    }
+
+    public void setGramatica(String input){
+        this.SimbolosNoTerminales.clear();
+        this.SimbolosTerminales.clear();
+        this.FirmMap.clear();
+        this.FollMap.clear();
+        DescensoRecursivo DS = new DescensoRecursivo(this , input);
+        DS.getHello();
+        this.SimbolosTerminales.add(Simbolo.SimboloFinal);
     }
 
     public List<Simbolo> getSimbolosTerminales() {

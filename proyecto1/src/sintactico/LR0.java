@@ -17,11 +17,11 @@ import lexico.AnalisisLexico;
 
 public class LR0 {
 	public AnalisisLexico Lex;
-    public Gramatica Gram;
-    public String[][] TablaLR;
-    public int[][] VT;
-    public int[] VNT;
-    public Set<Simbolo> V;
+    private Gramatica Gram;
+    private String[][] TablaLR;
+    private int[][] VT;
+    private int[] VNT;
+    private Set<Simbolo> V;
     
     public LR0(){
         Lex = null;
@@ -118,18 +118,23 @@ public class LR0 {
             index = Arrays.binarySearch(VT[2], ListaSimb.get(i).hashCode());
             VT[3][index] = Tokens.get(i);
         }
+
+        Arrays.stream(VT).forEach(s->System.out.println(Arrays.toString(s)));
+        
         return true;
     }
 
     public void CreateVNT(){
         VNT = Gram.SimbolosNoTerminales.stream().mapToInt(Simb->Simb.hashCode()).toArray();
         Arrays.sort(VNT);
+        System.out.println(Arrays.toString(VNT));
     }
 
     public void CreateV(){
         V = new HashSet<>();
         V.addAll(Gram.SimbolosNoTerminales);
         V.addAll(Gram.SimbolosTerminales);
+        System.out.println(V);
     }
 
     public void init_table(){
@@ -142,7 +147,6 @@ public class LR0 {
 
         Set<itemLR0> inicialCerradura = Cerradura(new itemLR0(0, 0));
         Conj_Sj s0 = new Conj_Sj(j++, inicialCerradura);
-        
         estadosDescubiertos.put(inicialCerradura, s0);
         porAnalizar.add(s0);
         
@@ -150,8 +154,11 @@ public class LR0 {
         Arrays.fill(filaInicial, "-1");
         tablaTemporal.add(filaInicial);
 
+        
         while (!porAnalizar.isEmpty()) {
             Conj_Sj estadoActual = porAnalizar.poll();
+            System.out.println(estadoActual);
+            
             int filaActual = estadoActual.j;
 
             for (itemLR0 item : estadoActual.ConjuntoSJ) {
@@ -201,9 +208,9 @@ public class LR0 {
                 }
             }
         }
-
         TablaLR = tablaTemporal.toArray(String[][]::new);
     }
+
 
     public String[][] AnalisisLR(String cadenaInicial) {
         if (this.TablaLR == null) {
@@ -220,7 +227,7 @@ public class LR0 {
 
         // Obtener el primer token
         int tokenActual = this.Lex.yylex();
-
+    
         while (true) {
             int estadoActual = Integer.parseInt(pilaEstados.peek());
             int col = ObtenerColumna(tokenActual);
@@ -228,7 +235,8 @@ public class LR0 {
             String formatoPila = pilaEstados.stream()
                     .collect(Collectors.joining(" ", "", ""));
 
-            
+            System.out.println("FrMP: " + formatoPila);
+
             String cadenaRestante = this.Lex.CadenaAnalizar();
             String lexemaActual = this.Lex.Lexema;
             
@@ -304,7 +312,6 @@ public class LR0 {
         return bitacora.toArray(String[][]::new);
     }
 
-
     Set<itemLR0> IrA(Set<itemLR0> Sj, Simbolo Simbolo_a ){
         return Cerradura(Mover(Sj, Simbolo_a));
     }
@@ -317,7 +324,7 @@ public class LR0 {
         
         ConjuntoCerr.addAll(A);
         
-        Queue<Simbolo> PorAnalizar = new LinkedList<>();
+        Queue<Simbolo> PorAnalizarC = new LinkedList<>();
         Set<Simbolo> Analizados = new HashSet<>();
         Simbolo SimboloAct;
         LadoIzq NextRegla;
@@ -325,11 +332,11 @@ public class LR0 {
         for (itemLR0 item : A) {
             Simbolo simbAx = item.GetSimbolobyGram(Gram);
             if(!(simbAx == null || simbAx.Terminal))
-                PorAnalizar.add(simbAx); 
+                PorAnalizarC.add(simbAx); 
         }
 
-        while(!PorAnalizar.isEmpty()){
-            SimboloAct = PorAnalizar.poll();
+        while(!PorAnalizarC.isEmpty()){
+            SimboloAct = PorAnalizarC.poll();
             Analizados.add(SimboloAct);
             
             for(int i=0; i<Gram.Reglas.size(); i++){
@@ -338,13 +345,14 @@ public class LR0 {
                 if(NextRegla.SimboloIzq.equals(SimboloAct)){
                     ConjuntoCerr.add(new itemLR0(i,0));
                     
-                    if(!(Analizados.contains(NextRegla.Simbolos.get(0)) || PorAnalizar.contains(NextRegla.Simbolos.get(i)) || NextRegla.Simbolos.get(0).Terminal))
-                        PorAnalizar.add(NextRegla.Simbolos.get(0));
+                    if(!(Analizados.contains(NextRegla.Simbolos.get(0)) || PorAnalizarC.contains(NextRegla.Simbolos.get(0)) || NextRegla.Simbolos.get(0).Terminal))
+                        PorAnalizarC.add(NextRegla.Simbolos.get(0));
                     
                 }
             }
         }
         
+        System.out.println(ConjuntoCerr);
         return ConjuntoCerr;
     }
 
@@ -353,22 +361,22 @@ public class LR0 {
         if(a == null)
             return ConjuntoCerr;
 
-        ConjuntoCerr.add(a);
+        // Insertamos una copia nueva para evitar arrastrar referencias del bucle de init_table
+        ConjuntoCerr.add(new itemLR0(a.NumRegla, a.PosPunto));
 
         Simbolo Simb = a.GetSimbolobyGram(Gram);
-	
-        if(Simb.Terminal)
+        if(Simb == null || Simb.Terminal) // Añadida validación de null por seguridad
             return ConjuntoCerr;
-	
-        Queue<Simbolo> PorAnalizar = new LinkedList<>();
+        
+        Queue<Simbolo> PorAnalizarC = new LinkedList<>();
         Set<Simbolo> Analizados = new HashSet<>();
         Simbolo SimboloAct;
         LadoIzq NextRegla;
 
-        PorAnalizar.add(Simb);
+        PorAnalizarC.add(Simb);
 
-        while(!PorAnalizar.isEmpty()){
-            SimboloAct = PorAnalizar.poll();
+        while(!PorAnalizarC.isEmpty()){
+            SimboloAct = PorAnalizarC.poll();
             Analizados.add(SimboloAct);
             
             for(int i=0; i<Gram.Reglas.size(); i++){
@@ -377,13 +385,14 @@ public class LR0 {
                 if(NextRegla.SimboloIzq.equals(SimboloAct)){
                     ConjuntoCerr.add(new itemLR0(i,0));
                     
-                    if(!(Analizados.contains(NextRegla.Simbolos.get(0)) || PorAnalizar.contains(NextRegla.Simbolos.get(i)) || NextRegla.Simbolos.get(0).Terminal))
-                        PorAnalizar.add(NextRegla.Simbolos.get(0));
-                    
+                    if(!NextRegla.Simbolos.isEmpty()){
+                        Simbolo primerSimb = NextRegla.Simbolos.get(0);
+                        if(!(Analizados.contains(primerSimb) || PorAnalizarC.contains(primerSimb) || primerSimb.Terminal))
+                            PorAnalizarC.add(primerSimb);
+                    }
                 }
             }
         }
-
 
         return Cerradura(ConjuntoCerr);
     }
@@ -394,12 +403,98 @@ public class LR0 {
         if(A == null || A.isEmpty())
             return ConjuntoMov;
         
-        ConjuntoMov = A.stream().filter(item->item.GetSimbolobyGram(Gram) != null && item.GetSimbolobyGram(Gram).equals(Simbolo_a)).collect(Collectors.toSet());
-        ConjuntoMov.forEach(item->item.PosPunto++);
+        ConjuntoMov = A.stream()
+            .filter(item -> item.GetSimbolobyGram(Gram) != null && item.GetSimbolobyGram(Gram).equals(Simbolo_a))
+            .map(item -> new itemLR0(item.NumRegla, item.PosPunto + 1))
+            .collect(Collectors.toSet());
 
+        System.out.println("Conjunto Mover generado: " + ConjuntoMov);
         return ConjuntoMov;
     }
-    
+
+    public String[][] getVt(){
+        String[][] tablaVT = new String[2][VT[0].length];
+        for(Simbolo Simb : Gram.SimbolosTerminales){
+            int idx = ObtenerColumna(Simb);
+            tablaVT[0][idx] = Simb.Nombre;
+            tablaVT[1][idx] = String.valueOf(VT[0][idx]);
+        }
+
+        return tablaVT;
+    }
+
+    public String[] getVNT(){
+        String[] tablaVnT = new String[VNT.length];
+        for(Simbolo Simb : Gram.SimbolosNoTerminales){
+            int idx = ObtenerIndice(Simb);
+            tablaVnT[idx] = Simb.Nombre;
+        }
+        return tablaVnT;
+    }
+
+    public String[] getCabeceraTabla(){
+        String[] Cabecera = new String[V.size()+1];
+        String[] tablaVt = getVt()[0];
+        String[] tablaVnt = getVNT();
+        
+        Cabecera[0] = "";
+
+        System.arraycopy(tablaVt, 0, Cabecera, 1, tablaVt.length);
+        System.arraycopy(tablaVnt, 0, Cabecera, tablaVt.length+1, tablaVnt.length);
+
+        return Cabecera;
+    }
+
+    public String[][] getTablaLR(){
+        String[][] TablaLRsalida = new String[TablaLR.length][TablaLR[0].length+1];
+
+        for (int i = 0; i < TablaLR.length; i++) {
+            TablaLRsalida[i][0] = "S" + String.valueOf(i);
+
+            for (int j = 0; j < TablaLR[0].length; j++) {
+                String valorRegla = TablaLR[i][j];
+            
+                if (valorRegla.equals("-1")) {
+                    TablaLRsalida[i][j + 1] = "";
+                } else {
+                    TablaLRsalida[i][j + 1] = valorRegla;
+                }   
+            }
+        }
+
+        return TablaLRsalida;
+    }
+
+    public void setSigma(String Sigma){this.Lex.SetSigma(Sigma);}
+
+    public void setGramatica(Gramatica Grama){this.Gram = Grama;}
+
+    public void setLexico(AnalisisLexico LEx){this.Lex = LEx;}
+
+    public void setLexico(String ruta, String sig){this.Lex = new AnalisisLexico(sig, ruta);}
+
+    /*
+    public String[][] getTablaLL(){
+        String[][] tablaCompleta = new String[TablaLL.length][TablaLL[0].length+1];
+        String[] tablaVnt = getVNT();
+
+        for (int i = 0; i < tablaCompleta.length; i++){
+            tablaCompleta[i][0] = tablaVnt[i];
+
+            for (int j = 0; j < TablaLL[0].length; j++) {
+                int valorRegla = TablaLL[i][j];
+                if (valorRegla == -1) {
+                    tablaCompleta[i][j + 1] = ""; // O puedes poner "-" para que sea visualmente claro
+                } else {
+                    // Parseo rápido de int a String, desplazado una posición a la derecha (j + 1)
+                    tablaCompleta[i][j + 1] = String.valueOf(valorRegla);
+                }   
+            }
+        }
+
+        return tablaCompleta;
+    }*/
+
     
 }
 
@@ -437,6 +532,11 @@ class Conj_Sj {
     @Override
     public int hashCode() {
         return Objects.hash(this.ConjuntoSJ);
+    }
+
+    @Override
+    public String toString(){
+        return "[S." + j + "\n" + ConjuntoSJ + "\n" + transiciones + "\n" + ConjuntoSJ.hashCode() +"]" ;
     }
 }
 
@@ -487,7 +587,8 @@ class itemLR0{
     
     @Override
     public String toString(){
-        return String.format("Item: %s ,%s :: Hash:: %s", this.NumRegla , this.PosPunto, this.hashCode());
+        return "Item: " + this.NumRegla +","+this.PosPunto+" Hash: "+this.hashCode();
+        //return String.format("Item: %s ,%s :: Hash:: %s + :: Simbolo: ", this.NumRegla , this.PosPunto, this.hashCode());
     }
     
     

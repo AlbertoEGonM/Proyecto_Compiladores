@@ -37,4 +37,9 @@ public class Simbolo {
     public int hashCode() {
         return Objects.hash(Nombre);
     }
+
+    @Override
+    public String toString(){
+        return "\n" + this.Nombre + " T:" + this.Terminal + " Hash:" + hashCode() ;
+    }
 }

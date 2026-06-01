@@ -44,7 +44,7 @@ public class VentanaLL1 extends JDialog {
                                     F-> (E)| num;""";
 
     public VentanaLL1(JFrame parent) {
-        super(parent,"Analizador Sintáctico LL(1) - Interfaz Gráfica",true);
+        super(parent,"Analizador Sintáctico LL",true);
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100, 750);
         setLocationRelativeTo(parent);
