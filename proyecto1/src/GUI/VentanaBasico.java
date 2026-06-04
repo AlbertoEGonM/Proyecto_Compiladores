@@ -1,6 +1,7 @@
 package GUI;
 
 import AFN.AFN;
+import AFN.SimbESP;
 import java.awt.*;
 import javax.swing.*;
 
@@ -8,7 +9,7 @@ public class VentanaBasico extends JDialog {
 
     public VentanaBasico(JFrame parent) {
         super(parent, "Crear AFN Básico", true); // El 'true' la hace modal
-        setSize(300, 180);
+        setSize(300, 200);
         setLocationRelativeTo(parent);
         // DISPOSE_ON_CLOSE solo cierra esta ventanita, no todo el programa
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); 
@@ -19,6 +20,17 @@ public class VentanaBasico extends JDialog {
         JLabel label2 = new JLabel("Ingresa el carácter 2 para el AFN:");
         JTextField txtCaracter2 = new JTextField(5);
         JButton btnCrear = new JButton("Crear AFN");
+        JButton btnCrearAFNomitir = new JButton("Crear AFN's omitir");
+
+        btnCrearAFNomitir.addActionListener(e->{
+            AFN[] afnOmitir = new AFN[3];
+            int i=0;
+            for(Character Omitir : SimbESP.SimbolosOmitir){
+                afnOmitir[i] = new AFN(Omitir);
+                afnOmitir[i++].E_Regular = "O" + Omitir + "m";
+            }
+            JOptionPane.showMessageDialog(this, "AFNs Omitir creados");
+        });
 
         btnCrear.addActionListener(e -> {
             String c1 = txtCaracter.getText();
@@ -65,7 +77,7 @@ public class VentanaBasico extends JDialog {
                     vGrafo.setVisible(true); // Mostramos el grafo resultante
                 }
 
-            } catch (Exception ex) {
+            } catch (HeadlessException ex) {
                 JOptionPane.showMessageDialog(this, "Error al crear el AFN: " + ex.getMessage());
             }
         });
@@ -75,5 +87,6 @@ public class VentanaBasico extends JDialog {
         add(label2);
         add(txtCaracter2);
         add(btnCrear);
+        add(btnCrearAFNomitir);
     }
 }

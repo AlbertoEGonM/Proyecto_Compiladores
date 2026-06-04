@@ -33,13 +33,9 @@ public class AFN {
     @SuppressWarnings("OverridableMethodCallInConstructor")
     public AFN(char c){
         Alfabeto = new HashSet<>();
-        Alfabeto.clear();
         EstadosAFN = new HashSet<>();
-        EstadosAFN.clear();
         EstadosAcept = new HashSet<>();
-        EstadosAcept.clear();
         IdAFN = ContadorAFNs++;
-
         this.CrearAFNBasico(c);
     }
 
@@ -47,11 +43,8 @@ public class AFN {
     @SuppressWarnings("OverridableMethodCallInConstructor")
     public AFN(char a, char b){
         Alfabeto = new HashSet<>();
-        Alfabeto.clear();
         EstadosAFN = new HashSet<>();
-        EstadosAFN.clear();
         EstadosAcept = new HashSet<>();
-        EstadosAcept.clear();
         IdAFN = ContadorAFNs++;
 
         this.CrearAFNBasico(a, b);

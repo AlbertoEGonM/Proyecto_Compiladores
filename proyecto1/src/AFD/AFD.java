@@ -44,7 +44,7 @@ public class AFD implements java.io.Serializable {
 		}
 	}
 
-    public void ConvertirAFD(AFN F){
+    public void ConvertirAFD(final AFN F){
 		
 		Stack<Sj> Q = new Stack<>();
 		Map<HashSet<Estado>,Sj> R = new HashMap<>();
@@ -80,16 +80,6 @@ public class AFD implements java.io.Serializable {
 				}
 			}
 		}
-
-		// Estado de simbolos omitir.
-
-		/*SjTemp = new Sj(NumSj++, null, F);
-		SjTemp.EsFinal = true;
-		SjTemp.Token = SimbESP.Omitir;
-		SjTemp.Transiciones[256] = SjTemp.Token;
-		for(Character O : SimbESP.SimbolosOmitir)
-			SjTemp.AgregarTransicion(SjTemp, O);
-		*/
 		this.numEstadosSj = NumSj;
 
 		// ImprimirAFD(R); Parte del Test: Imprime el AFD generado a partir del AFN
@@ -97,13 +87,8 @@ public class AFD implements java.io.Serializable {
 		/* Proceso Para convertir el map R en Un arreglo Bidimensional y guardarlo en un Bin */
 		TablaAFD = new int[NumSj][257];
 
-		//System.arraycopy(SjTemp.Transiciones, 0, TablaAFD[NumSj-1], 0, 257);
 		
 		for(Sj s : R.values()){
-			/*if(s.j == 0){
-				for(Character O : SimbESP.SimbolosOmitir)
-				s.AgregarTransicion(SjTemp, O);
-			}*/
             System.arraycopy(s.Transiciones, 0, TablaAFD[s.j], 0, 257);
 		}
 
@@ -112,7 +97,7 @@ public class AFD implements java.io.Serializable {
 
 	}
 
-	public void GuardarArchivoBin(String Ruta){
+	public void GuardarArchivoBin(final String Ruta){
 		try(ObjectOutputStream file = new ObjectOutputStream(new FileOutputStream(Ruta))){
 			file.writeObject(this);
 		}catch(Exception e){
@@ -151,7 +136,7 @@ public class AFD implements java.io.Serializable {
 	}
 
 	public static String[][] getSumTable() {
-		String [][] sumTable = new String[afdAsignado.numEstadosSj ][afdAsignado.Alfabeto.size()+2 + SimbESP.SimbolosOmitir.size()];
+		String [][] sumTable = new String[afdAsignado.numEstadosSj ][afdAsignado.Alfabeto.size()+2];
 		TreeSet<Character> alfabeto = AFD.getAlfabeto();
 
 
@@ -164,25 +149,14 @@ public class AFD implements java.io.Serializable {
 					sumTable[i][z] = "" + afdAsignado.TablaAFD[i][a];
 				z++;
 			}
-			for(Character O : SimbESP.SimbolosOmitir){
-				if(afdAsignado.TablaAFD[i][O] != -1)
-					sumTable[i][z] = "" + afdAsignado.TablaAFD[i][O];
-				z++;
-			}
-
-			/*for(int j = 0, z = 1; j < 255; j++){
-				if(afdAsignado.TablaAFD[i][j] != -1){
-					sumTable[i][z++] = "" + afdAsignado.TablaAFD[i][j];
-				}
-			}*/
-			sumTable[i][afdAsignado.Alfabeto.size()+1+ SimbESP.SimbolosOmitir.size()] = ""+ afdAsignado.TablaAFD[i][256];
+			sumTable[i][afdAsignado.Alfabeto.size()+1] = ""+ afdAsignado.TablaAFD[i][256];
 		}
 
 		return sumTable;
 	}
 
 	public static String[] CabeceraTabla(){
-        String [] cabecera = new String[AFD.afdAsignado.Alfabeto.size() + 2 + SimbESP.SimbolosOmitir.size()];
+        String [] cabecera = new String[AFD.afdAsignado.Alfabeto.size() + 2];
         cabecera[0] = "Estado";
         TreeSet<Character> alfabeto = AFD.getAlfabeto();
         int i = 1;
@@ -190,12 +164,8 @@ public class AFD implements java.io.Serializable {
             cabecera[i] = String.valueOf(c);
             i++;
         }
-		for(Character O : SimbESP.SimbolosOmitir){
-			cabecera[i] = String.valueOf(O);
-			i++;
-		}
         
-        cabecera[AFD.afdAsignado.Alfabeto.size() + 1 + SimbESP.SimbolosOmitir.size()] = "Token";
+        cabecera[AFD.afdAsignado.Alfabeto.size() + 1] = "Token";
         
         return cabecera;
     };

@@ -7,7 +7,7 @@ import javax.swing.*;
 public class VentanaCerraduraPositiva extends JDialog {
     public VentanaCerraduraPositiva(JFrame parent) {
         super(parent, "Aplicar Cerradura Positiva (+)", true);
-        setSize(300, 150);
+        setSize(400, 200);
         setLocationRelativeTo(parent);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 

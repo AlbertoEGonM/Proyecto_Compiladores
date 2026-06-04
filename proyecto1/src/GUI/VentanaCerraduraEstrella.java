@@ -7,7 +7,7 @@ import javax.swing.*;
 public class VentanaCerraduraEstrella extends JDialog {
     public VentanaCerraduraEstrella(JFrame parent) {
         super(parent, "Aplicar Cerradura de Kleene (*)", true);
-        setSize(300, 150);
+        setSize(400, 200);
         setLocationRelativeTo(parent);
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
 

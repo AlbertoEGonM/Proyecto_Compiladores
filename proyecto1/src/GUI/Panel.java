@@ -1,11 +1,9 @@
 package GUI;
 
+import AFD.AFD;
 import java.io.File;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import AFD.AFD;
 
 public class Panel extends JFrame {
 
@@ -35,6 +33,8 @@ public class Panel extends JFrame {
         JMenuItem itemProbarLexico = new JMenuItem("Probar analizador Léxico");
         JMenuItem itemVentanaAFNs = new JMenuItem("Mostrar AFNs");
         JMenuItem itemMostrarAFD = new JMenuItem("Mostrar AFD");
+        JMenuItem itemLL1 = new JMenuItem("Analisis LL1");
+        JMenuItem itemLR = new JMenuItem("Analisis LR0");
 
         // --- CONEXIÓN DE TODAS LAS VENTANAS ---
         // Nota: Para que este archivo compile sin errores, deberás crear 
@@ -57,6 +57,9 @@ public class Panel extends JFrame {
         itemVentanaAFNs.addActionListener(e-> new VentanaAFNS(this).setVisible(true));
 
         itemMostrarAFD.addActionListener(e-> {if(AFD.afdAsignado != null){new VentanaGrafo(this, AFD.afdAsignado).setVisible(AFD.afdAsignado != null);}});
+        itemLL1.addActionListener(e-> new VentanaLL1(this).setVisible(true));
+        itemLR.addActionListener(e-> new VentanaLR(this).setVisible(true));
+
 
         // Ensamblar el menú desplegable
         menuAFN.add(itemBasico);
@@ -78,6 +81,10 @@ public class Panel extends JFrame {
         menuAFD.add(GuardarAFD());
         menuAFD.add(CargarAFD());
         menuAFD.add(itemMostrarAFD);
+
+        // Ensamblar menu sintactico
+        menuSintactico.add(itemLL1);
+        menuSintactico.add(itemLR);
 
         menuBar.add(menuAFN);
         menuBar.add(menuAFD);
