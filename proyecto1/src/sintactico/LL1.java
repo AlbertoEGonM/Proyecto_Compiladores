@@ -138,8 +138,7 @@ public class LL1 {
             System.err.println("Error: El analizador sintáctico no está inicializado.");
             return tablaHistorial;
         }
-
-
+        
         // 1. Inicializar Pila Sintáctica
         Stack<Simbolo> pilaSintactica = new Stack<>();
         pilaSintactica.push(Simbolo.SimboloFinal); // $

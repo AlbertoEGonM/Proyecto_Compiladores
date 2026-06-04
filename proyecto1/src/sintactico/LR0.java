@@ -118,8 +118,6 @@ public class LR0 {
             index = Arrays.binarySearch(VT[2], ListaSimb.get(i).hashCode());
             VT[3][index] = Tokens.get(i);
         }
-
-        Arrays.stream(VT).forEach(s->System.out.println(Arrays.toString(s)));
         
         return true;
     }
@@ -127,14 +125,12 @@ public class LR0 {
     public void CreateVNT(){
         VNT = Gram.SimbolosNoTerminales.stream().mapToInt(Simb->Simb.hashCode()).toArray();
         Arrays.sort(VNT);
-        System.out.println(Arrays.toString(VNT));
     }
 
     public void CreateV(){
         V = new HashSet<>();
         V.addAll(Gram.SimbolosNoTerminales);
         V.addAll(Gram.SimbolosTerminales);
-        System.out.println(V);
     }
 
     public void init_table(){
@@ -154,10 +150,8 @@ public class LR0 {
         Arrays.fill(filaInicial, "-1");
         tablaTemporal.add(filaInicial);
 
-        
         while (!porAnalizar.isEmpty()) {
             Conj_Sj estadoActual = porAnalizar.poll();
-            System.out.println(estadoActual);
             
             int filaActual = estadoActual.j;
 
@@ -234,8 +228,6 @@ public class LR0 {
             
             String formatoPila = pilaEstados.stream()
                     .collect(Collectors.joining(" ", "", ""));
-
-            System.out.println("FrMP: " + formatoPila);
 
             String cadenaRestante = this.Lex.CadenaAnalizar();
             String lexemaActual = this.Lex.Lexema;
@@ -352,7 +344,6 @@ public class LR0 {
             }
         }
         
-        System.out.println(ConjuntoCerr);
         return ConjuntoCerr;
     }
 
@@ -361,11 +352,10 @@ public class LR0 {
         if(a == null)
             return ConjuntoCerr;
 
-        // Insertamos una copia nueva para evitar arrastrar referencias del bucle de init_table
         ConjuntoCerr.add(new itemLR0(a.NumRegla, a.PosPunto));
 
         Simbolo Simb = a.GetSimbolobyGram(Gram);
-        if(Simb == null || Simb.Terminal) // Añadida validación de null por seguridad
+        if(Simb == null || Simb.Terminal)
             return ConjuntoCerr;
         
         Queue<Simbolo> PorAnalizarC = new LinkedList<>();
@@ -394,7 +384,7 @@ public class LR0 {
             }
         }
 
-        return Cerradura(ConjuntoCerr);
+        return ConjuntoCerr;
     }
     
     Set<itemLR0> Mover(Set<itemLR0> A, Simbolo Simbolo_a){
@@ -408,7 +398,6 @@ public class LR0 {
             .map(item -> new itemLR0(item.NumRegla, item.PosPunto + 1))
             .collect(Collectors.toSet());
 
-        System.out.println("Conjunto Mover generado: " + ConjuntoMov);
         return ConjuntoMov;
     }
 
@@ -472,36 +461,12 @@ public class LR0 {
     public void setLexico(AnalisisLexico LEx){this.Lex = LEx;}
 
     public void setLexico(String ruta, String sig){this.Lex = new AnalisisLexico(sig, ruta);}
-
-    /*
-    public String[][] getTablaLL(){
-        String[][] tablaCompleta = new String[TablaLL.length][TablaLL[0].length+1];
-        String[] tablaVnt = getVNT();
-
-        for (int i = 0; i < tablaCompleta.length; i++){
-            tablaCompleta[i][0] = tablaVnt[i];
-
-            for (int j = 0; j < TablaLL[0].length; j++) {
-                int valorRegla = TablaLL[i][j];
-                if (valorRegla == -1) {
-                    tablaCompleta[i][j + 1] = ""; // O puedes poner "-" para que sea visualmente claro
-                } else {
-                    // Parseo rápido de int a String, desplazado una posición a la derecha (j + 1)
-                    tablaCompleta[i][j + 1] = String.valueOf(valorRegla);
-                }   
-            }
-        }
-
-        return tablaCompleta;
-    }*/
-
     
 }
 
 class Conj_Sj {
     int j;
     Set<itemLR0> ConjuntoSJ;
-    // Ahora guardamos objetos Transicion que contienen el símbolo y el destino
     Set<Transicion> transiciones; 
 
     public Conj_Sj() {
@@ -516,7 +481,6 @@ class Conj_Sj {
         this.transiciones = new HashSet<>();
     }
 
-    // Método para añadir una arista/transición de forma limpia
     public void agregarTransicion(Simbolo simb, Conj_Sj destino) {
         this.transiciones.add(new Transicion(simb, destino));
     }
