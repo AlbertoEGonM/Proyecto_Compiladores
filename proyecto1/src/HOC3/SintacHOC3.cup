@@ -1,0 +1,80 @@
+package HOC3;
+import java_cup.runtime.*;
+import java.io.FileReader;
+
+class AnalizadorSintactico;
+
+parser code {:
+    formHoc3 frmInterfaz; /* instancia de una ventana donde se colocara las instrucciones a analizar y el resultado */
+    public void report_error(String mensaje, Object info){
+        StringBuilder m = new StringBuilder("Error");
+        if(info instanceof java_cup.runtime.Symbol){
+            java_cup.runtime.Symbol s = (java_cup.runtime.Symbol) info;
+            
+            if(s.left >= 0){
+                m.append(" en la linea " + (s.left+1));
+                if(s.right >= 0)
+                    m.append(", columna " + (s.right +1));
+            }
+        }
+        m.append("  : " + mensaje);
+        System.err.println(m);
+    }
+
+    public void report_fatal_error(String message, Object info){
+        report_error(message,info);
+        System.exit(1);
+    }
+
+:}
+
+ /* Definicion de la gramatica */
+
+terminal SEMIC;
+terminal OpSuma, OpResta, OpProd, OpDiv, OpAsig, OpPotencia;
+terminal ParIzq, ParDer;
+terminal Float NUM;
+
+terminal SymbolHoc VAR;
+terminal SymbolHoc COSNT_PRED;  /* PI, E, PHI, RAD, etc :: las constantes especificadas en el libro */
+terminal SymbolHoc BLTIN;       /* sin, cos, atan, etc */
+terminal MENOSUNIARIO;
+
+non terminal list;
+non terminal Float asgn, expr;
+
+/* Precedences */
+precedence right OpAsig;
+precedence left OpSuma, OpResta;
+precedence left OpProd, OpDiv;
+precedence left MENOSUNIARIO;
+precedence right OpPotencia;
+
+/* inicio */
+
+list        ::= expr:valExpr SEMIC      {: frmInterfaz.txtResultSintactico.append(Float.toString(valExpr) + "\n"); :}
+            |   list expr:valExpr SEMIC {: frmInterfaz.txtResultSintactico.append(Float.toString(valExpr) + "\n"); :}
+            ;
+ 
+asgn        ::= VAR:v OpAsig expr:valExpr   {: ((VariableSymbol)v).setValue(valExpr) ; RESULT = valExpr; :}
+            ;
+
+expr        ::= NUM:valNum                      {: RESULT = valNum; :}
+            |   VAR:refVar                      {: RESULT = ((VariableSymbol)refVar).getValue(); :}
+            |   COSNT_PRED:refConstPred         {: RESULT = ((VariableSymbol)refConstPred).getValue(); :}
+            |   asgn:valAsign                   {: RESULT = valAsign; :}
+            |   expr:val1 OpSuma expr:val2      {: RESULT = val1 + val2; :}
+            |   expr:val1 OpResta expr:val2     {: RESULT = val1 - val2; :}
+            |   expr:val1 OpProd expr:val2      {: RESULT = val1 * val2; :}
+            |   expr:val1 OpDiv expr:val2       {: RESULT = val1 / val2; :}
+            |   ParIzq expr:val1 ParDer         {: RESULT = val1; :}
+            |   BLTIN:funcSimb ParIzq expr:val1 ParDer {:
+                                                    RESULT = (float) ((FunctionSymbol)funcSimb).apply((double) val1);
+                                                :}
+            |   OpResta expr:val1               {: RESULT = -val1; :} %prec MENOSUNIARIO
+            |   expr:base OpPotencia expr:exponente     {:
+                                                            RESULT = (float)Math.pow((double) base, (double) exponente);  
+                                                        :};
+
+
+

@@ -247,7 +247,7 @@ class DescensoRecursivo{
         return false;
     }
 
-    // ListaSimbolos → SIMB ListaSimbolosP
+    // ListaSimbolos → (SIMB ListaSimbolosP) = SIMB(list)
     boolean ListaSimbolos(List<Simbolo> listaSimbolos){
         return SIMB(listaSimbolos);
     }
@@ -275,7 +275,6 @@ class DescensoRecursivo{
             s.Nombre = analisisLexico.Lexema;
             s.Terminal = true;
         }
-        
 
         if(ListaSimbolosP(listaSimbolos)){
             listaSimbolos.addFirst(s);

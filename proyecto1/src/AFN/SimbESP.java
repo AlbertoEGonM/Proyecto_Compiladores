@@ -9,5 +9,5 @@ public final class SimbESP {
     public static int Error = 20000;
     public static int Omitir = 20001; // Omitir Saltos de linea, Espacios y tabulaciones
     public static List<Character> SimbolosOmitir = List.of(' ', '\n' , '\t');
-    public static Set<String> SimbolosEpsilon = Set.of("epsilon","ϵ");
+    public static Set<String> SimbolosEpsilon = Set.of("epsilon","ϵ","ee");
 }
