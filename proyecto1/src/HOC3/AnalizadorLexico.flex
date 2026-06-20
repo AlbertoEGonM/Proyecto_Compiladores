@@ -38,9 +38,9 @@ Digito = [0-9]
 
 %% /* Expresiones regulares */
 
-[\t\n]+                     { ; }
+[\t\n\r]+                     { }
 ";"                         { return symbol(AnalizadorSintacticoSym.SEMIC); }
-{Digito}+(\.{Digito}+)?     { return symbol(AnalizadorSintacticoSym.Num, new Float(yytext())); }
+{Digito}+(\.{Digito}+)?     { return symbol(AnalizadorSintacticoSym.NUM, Float.valueOf(yytext())); }
 
 "="                         { return symbol(AnalizadorSintacticoSym.OpAsig); }
 "/"                         { return symbol(AnalizadorSintacticoSym.OpDiv); }
@@ -57,13 +57,15 @@ Digito = [0-9]
                                     s = new VariableSymbol(yytext(), AnalizadorSintacticoSym.VAR);
                                     ListaSimb.install(s);
                                 }
-                                tipSimb = switch(s){
-                                    case FunctionSymbol -> AnalizadorSintacticoSym.BLTIN;
-                                    case VariableSymbol -> ( ((VariableSymbol)s).isConstant() ? AnalizadorSintacticoSym.COSNT_PRED : AnalizadorSintacticoSym.VAR );
-                                    default-> AnalizadorSintacticoSym.VAR;
+                                if (s instanceof FunctionSymbol) {
+                                    TipSimb = AnalizadorSintacticoSym.BLTIN;
+                                } else if (s instanceof VariableSymbol && ((VariableSymbol)s).isConstant()) {
+                                    TipSimb = AnalizadorSintacticoSym.COSNT_PRED;
+                                } else {
+                                    TipSimb = AnalizadorSintacticoSym.VAR;
                                 }
 
                                 return symbol(TipSimb, s);
                             }   
 
-.                           { return Symbol(AnalizadorSintacticoSym.error); }
+.                           { return symbol(AnalizadorSintacticoSym.error); }

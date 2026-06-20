@@ -4,5 +4,17 @@
         "ReferencedLib/java-cup-11b.jar",
         "ReferencedLib/java-cup-11b-runtime.jar",
         "ReferencedLib/JFlex.jar"
+    ],
+    "java.completion.favoriteStaticMembers": [
+        
+        "org.junit.Assert.*",
+        "org.junit.Assume.*",
+        "org.junit.jupiter.api.Assertions.*",
+        "org.junit.jupiter.api.Assumptions.*",
+        "org.junit.jupiter.api.DynamicContainer.*",
+        "org.junit.jupiter.api.DynamicTest.*",
+        "org.mockito.Mockito.*",
+        "org.mockito.ArgumentMatchers.*",
+        "org.mockito.Answers.*"
     ]
 }
