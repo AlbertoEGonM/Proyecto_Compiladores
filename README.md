@@ -8,7 +8,7 @@ Incluye además un intérprete tipo *HOC* (calculadora de expresiones aritmétic
 
 ---
 
-## 📋 Tabla de contenido
+## Tabla de contenido
 
 - [Características](#-características)
 - [Arquitectura del proyecto](#-arquitectura-del-proyecto)
@@ -23,7 +23,7 @@ Incluye además un intérprete tipo *HOC* (calculadora de expresiones aritmétic
 
 ---
 
-## ✨ Características
+## Características
 
 - **Construcción de AFN's** mediante el algoritmo de Thompson:
   - AFN básico de un símbolo o de un rango `[a-z]`.
@@ -39,7 +39,7 @@ Incluye además un intérprete tipo *HOC* (calculadora de expresiones aritmétic
 
 ---
 
-## 🏗️ Arquitectura del proyecto
+## Arquitectura del proyecto
 
 ```
                 ┌────────────┐
@@ -82,7 +82,7 @@ Toda la interacción del usuario ocurre a través de **GUI.Panel**, que desplieg
 
 ---
 
-## 📁 Estructura de carpetas
+##  Estructura de carpetas
 
 ```
 proyecto1/src/
@@ -145,7 +145,7 @@ proyecto1/src/
 
 ---
 
-## 🔄 Flujo de trabajo
+## Flujo de trabajo
 
 ### 1. Generar uno o varios AFN's
 - **Básico**: un símbolo o un rango de caracteres (`AFN/Básico`).
@@ -167,17 +167,17 @@ Desde el menú **AFD's**: `Guardar AFD en bin` / `Cargar AFD de un Bin`, usando 
 
 ---
 
-## ⚙️ Requisitos
+## Requisitos
 
 - **JDK 17+** (se usan *text blocks* `"""..."""`, *switch expressions* con `yield`, y `List.removeFirst()`/`addFirst()` de listas secuenciadas — esto último requiere **Java 21+**).
 - Sin gestor de dependencias externo (no usa Maven/Gradle): el código se compila directamente con `javac`.
 - Para regenerar `HOC3/AnalizadorLexico.java` o el parser CUP se necesitarían las herramientas **JFlex** y **CUP**, pero el repositorio ya incluye el código generado, por lo que no son obligatorias para compilar y ejecutar el proyecto.
 
-> ⚠️ El módulo `HOC3` depende de clases (`java_cup.runtime.Symbol`, `Scanner`, etc.) de la librería **java-cup-runtime**. Si vas a compilar ese paquete, asegúrate de tener ese `.jar` en el classpath.
+>  El módulo `HOC3` depende de clases (`java_cup.runtime.Symbol`, `Scanner`, etc.) de la librería **java-cup-runtime**. Si vas a compilar ese paquete, asegúrate de tener ese `.jar` en el classpath.
 
 ---
 
-## ▶️ Cómo ejecutar
+##  Cómo ejecutar
 
 ### Desde línea de comandos
 
@@ -205,7 +205,7 @@ java -cp ../out:java-cup-runtime.jar Main
 
 ---
 
-## 🖱️ Guía de uso (GUI)
+## Guía de uso (GUI)
 
 Al iniciar, **`Panel`** muestra tres menús:
 
@@ -215,7 +215,7 @@ Al iniciar, **`Panel`** muestra tres menús:
 | **AFD's** | Guardar AFD en bin, Cargar AFD de un Bin, Mostrar AFD |
 | **Analisis Sintáctico** | Analisis LL1, Analisis LR0, HOC 3 |
 
-> 💡 Cada AFN creado queda registrado en `AFN.ColeccAFNs` (colección estática) y se identifica por su **expresión regular** en los `JComboBox` de las ventanas siguientes — por eso conviene crear los AFN's en orden, de los más simples a los más complejos.
+> Cada AFN creado queda registrado en `AFN.ColeccAFNs` (colección estática) y se identifica por su **expresión regular** en los `JComboBox` de las ventanas siguientes — por eso conviene crear los AFN's en orden, de los más simples a los más complejos.
 
 ### Ejemplo de gramática para LL(1) (incluida por defecto)
 
@@ -240,7 +240,7 @@ En ambos casos, los **símbolos terminales** detectados (`+`, `-`, `*`, `/`, `(`
 
 ---
 
-## 🔬 Detalles técnicos por módulo
+## Detalles técnicos por módulo
 
 ### `AFN`
 - `Estado` numera sus instancias con un contador estático (`ContadorEdo`), por lo que los IDs son únicos y crecientes durante toda la ejecución del programa (no se reinician entre AFN's).
@@ -283,7 +283,7 @@ En ambos casos, los **símbolos terminales** detectados (`+`, `-`, `*`, `/`, `(`
 
 ---
 
-## 💾 Formato de archivos `.afnd`
+## Formato de archivos `.afnd`
 
 Son simplemente objetos `AFD.AFD` serializados con `ObjectOutputStream` (serialización nativa de Java), guardados con extensión convencional `.afnd`. **No son portables entre versiones incompatibles de la clase `AFD`** (cambios en sus campos pueden invalidar archivos antiguos, ya que se usa `serialVersionUID = 1L` fijo).
 
@@ -297,11 +297,11 @@ Algunos módulos esperan rutas **absolutas hardcodeadas** a archivos `.afnd` esp
 "proyecto1\\src\\sintactico\\AFDGram.afnd"
 ```
 
-> ⚠️ Estas rutas usan separadores de Windows (`\\`) y son relativas al directorio desde donde se ejecuta el programa. Si ejecutas el proyecto en otro sistema operativo o desde otra carpeta de trabajo, **debes generar y/o ajustar la ubicación de estos archivos `.afnd`** (representando el AFD de las expresiones regulares propias y el de la gramática textual, respectivamente) para que esas funcionalidades operen correctamente.
+>  Estas rutas usan separadores de Windows (`\\`) y son relativas al directorio desde donde se ejecuta el programa. Si ejecutas el proyecto en otro sistema operativo o desde otra carpeta de trabajo, **debes generar y/o ajustar la ubicación de estos archivos `.afnd`** (representando el AFD de las expresiones regulares propias y el de la gramática textual, respectivamente) para que esas funcionalidades operen correctamente.
 
 ---
 
-## ⚠️ Notas y limitaciones conocidas
+## Notas y limitaciones conocidas
 
 - **Estado global compartido**: `AFD.afdAsignado` y `AFN.ColeccAFNs` son estáticos; abrir varias ventanas o reiniciar un flujo a medias puede dejar datos de una sesión anterior visibles en los `JComboBox`.
 - Algunas ventanas del menú principal (`VentanaUnionLexico`, `VentanaAnalizarCadena`) son simplificaciones o placeholders parcialmente funcionales — revisa el código fuente de cada una antes de asumir su comportamiento.
