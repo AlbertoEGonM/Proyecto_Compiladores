@@ -38,7 +38,6 @@ public class VentanaGenerarAFN extends JDialog {
                     "¡AFN generado con éxito!\nID del AFN: " + nuevoAfn.IdAFN, 
                     "Éxito", 
                     JOptionPane.INFORMATION_MESSAGE);
-                e
                 dispose(); 
                 
             } catch (Exception ex) {

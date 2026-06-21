@@ -1,5 +1,5 @@
 package HOC3;
-import java_cup.runtime;
+import java_cup.runtime.*;
 import java.io.Reader;
 
 %% /* inicio de declaraciones JFlex */
