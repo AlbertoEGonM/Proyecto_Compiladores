@@ -1,4 +1,4 @@
-package HOC3;
+package HOC5;
 
 public class VariableSymbol extends SymbolHoc {
     private double value;
