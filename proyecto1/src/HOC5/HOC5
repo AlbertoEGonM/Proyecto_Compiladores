@@ -1,0 +1,47 @@
+package HOC5;
+
+import java.io.StringReader;
+import java_cup.runtime.Symbol;
+
+public class HOC5 {
+
+    // Este método es para el botón "Analizar Lexicamente"
+    public String analizarLexicamente(String source) {
+        if (source == null || source.trim().isEmpty()) return "Ingresa una expresión.";
+
+        try {
+            // Usamos el AnalizadorLexico que generó JFlex
+            AnalizadorLexico lexer = new AnalizadorLexico(new StringReader(source));
+            StringBuilder out = new StringBuilder();
+            Symbol token;
+            
+            while ((token = lexer.next_token()).sym != AnalizadorSintacticoSym.EOF) {
+                out.append("Token ID: ").append(token.sym)
+                   .append(" | Lexema: ").append(token.value != null ? token.value.toString() : "null")
+                   .append("\n");
+            }
+            return out.toString();
+        } catch (Exception ex) {
+            return "Error léxico: " + ex.getMessage();
+        }
+    }
+
+    // Este método es para el botón "Analizar Sintacticamente"
+    public String analizarSintacticamente(String source) {
+        if (source == null || source.trim().isEmpty()) return "Ingresa una expresión.";
+
+        try {
+            StringReader sr = new StringReader(source);
+            // Usamos el AnalizadorSintactico y Lexico generados
+            AnalizadorLexico lexer = new AnalizadorLexico(sr);
+            AnalizadorSintactico parser = new AnalizadorSintactico(lexer);
+            
+            // Ejecutamos el parser
+            parser.parse();
+            
+            return "FIN DEL ANÁLISIS SINTÁCTICO";
+        } catch (Exception ex) {
+            return "Error sintáctico: " + ex.getMessage();
+        }
+    }
+}
