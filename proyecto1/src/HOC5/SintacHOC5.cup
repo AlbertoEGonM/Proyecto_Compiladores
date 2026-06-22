@@ -1,20 +1,23 @@
 package HOC5;
 import java_cup.runtime.*;
-import HOC3.*;
 import java.io.FileReader;
 
 class AnalizadorSintactico;
 
 parser code {:
 
-    Machine maquinaHoc = new Machine();
-    formHoc3 frmInterfaz; /* instancia de una ventana donde se colocara las instrucciones a analizar y el resultado */
+    public Machine maquinaHoc;
+    
+    // Constructor inyector que enlaza la máquina compartida
+    public AnalizadorSintactico(java_cup.runtime.Scanner s, Machine maquinaCompartida) {
+        super(s);
+        this.maquinaHoc = maquinaCompartida;
+    }
     
     public void report_error(String mensaje, Object info){
         StringBuilder m = new StringBuilder("Error");
         if(info instanceof java_cup.runtime.Symbol){
             java_cup.runtime.Symbol s = (java_cup.runtime.Symbol) info;
-            
             if(s.left >= 0){
                 m.append(" en la linea " + (s.left+1));
                 if(s.right >= 0)
@@ -32,8 +35,6 @@ parser code {:
 
 :}
 
- /* Definicion de la gramatica */
-
 terminal SEMIC;
 terminal OpSuma, OpResta, OpProd, OpDiv, OpAsig, OpPotencia;
 terminal ParIzq, ParDer, CorchIzq, CorchDer;
@@ -42,16 +43,19 @@ terminal PRINT, WHILE, IF, ELSE;
 terminal SymbolHoc NUM;
 terminal SymbolHoc VAR;
 terminal SymbolHoc CONST_NUM;
-terminal SymbolHoc CONST_PRED;  /* PI, E, PHI, RAD, etc :: las constantes especificadas en el libro */
-terminal SymbolHoc BLTIN;       /* sin, cos, atan, etc */
+terminal SymbolHoc CONST_PRED;
+terminal SymbolHoc BLTIN;
 terminal MENOSUNIARIO;
 terminal OR, AND, GT, GE, LT, LE, EQ, NE, NOT;
 
 non terminal list;
 non terminal Integer asgn, expr, stmt, stmtlist, cond, endcondwhile, endwhile;
-non terminal Integer endCondif, else;
+non terminal Integer endCondif, elseBranch;
+non terminal Integer marker;
 
-/* Precedences */
+precedence nonassoc IF;
+precedence nonassoc ELSE;
+
 precedence right OpAsig;
 precedence left OR;
 precedence left AND;
@@ -64,34 +68,59 @@ precedence right OpPotencia;
 /* inicio */
 
 list        ::= stmt
-            |   list stmt               /*{: maquinaHoc.code(Instruction.PRINT,Instruction.STOP); :}*/
+            |   list stmt               
             ;
  
-asgn        ::= VAR:v OpAsig expr:ind1       {: maquinaHoc.code(Instruction.varPush,new Instruction(v),Instruction.ASSIGN); RESULT = ind1; :}
+asgn        ::= VAR:v OpAsig expr:ind1       
+                    {: 
+                        maquinaHoc.code(Instruction.varPush,new Instruction(v),Instruction.ASSIGN);
+                        RESULT = ind1; 
+                    :}
             ;
 
-stmt        ::= asgn:ind1 SEMIC                 {: RESULT = ind1; :}
-            |   PRINT expr:ind1 SEMIC           {: maquinaHoc.code(Instruction.PRINT); RESULT = ind1; :}
-            |   WHILE cond:ind1 endcondwhile:ind2 stmt:ind3 endwhile:ind4   
-                                                {: maquinaHoc.Prog[ind2+1].setVal(ind4+2); maquinaHoc.Prog[ind4].setVal(ind1); RESULT = ind1; :}
-            |   IF cond:ind1 endCondif:ind2 stmt:ind3
-                                                {: maquinaHoc.Prog[ind2+1].setVal(maquinaHoc.getProgP()); RESULT = ind1; :}
-            |   IF cond:ind1 endCondif:ind2 stmt:ind3 else:ind4 stmt:ind6
-                                                {:  maquinaHoc.Prog[ind2+1].setVal(ind6);
-                                                    maquinaHoc.Prog[ind4+1].setVal(maquinaHoc.getProgP()); RESULT = ind1; :}
+stmt        ::= expr:ind1 SEMIC                 
+                    {: 
+                        maquinaHoc.code(Instruction.POP); 
+                        RESULT = ind1; 
+                    :}
+            |   PRINT expr:ind1 SEMIC           
+                    {: 
+                        maquinaHoc.code(Instruction.PRINT); 
+                        RESULT = ind1; 
+                    :}
+            |   WHILE marker:loopStart cond endcondwhile:jumpFalseIdx stmt endwhile:jumpEndIdx   
+                    {: 
+                        maquinaHoc.Prog[jumpEndIdx] = new Instruction((float)loopStart);
+                        maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)maquinaHoc.getProgP()); 
+                        RESULT = loopStart; 
+                    :}
+            |   IF cond endCondif:jumpFalseIdx stmt
+                    {: 
+                        maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)maquinaHoc.getProgP());
+                        RESULT = jumpFalseIdx; 
+                    :}
+            |   IF cond endCondif:jumpFalseIdx stmt elseBranch:jumpEndIdx stmt
+                    {:  
+                        maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)(jumpEndIdx + 1));
+                        maquinaHoc.Prog[jumpEndIdx] = new Instruction((float)maquinaHoc.getProgP()); 
+                        RESULT = jumpFalseIdx; 
+                    :}
             |   CorchIzq stmtlist:ind CorchDer  {: RESULT = ind; :}
             ;
 
-endcondwhile ::=                                {: RESULT = maquinaHoc.code(Instruction.jumpFalse,Instruction.STOP); :}
+/* Marcador invisible para calcular saltos */
+marker      ::= /* vacio */                     {: RESULT = maquinaHoc.getProgP(); :};
+
+endcondwhile ::=                                {: RESULT = maquinaHoc.code(Instruction.jumpFalse, new Instruction(0.0f)); :}
             ;
 
-endwhile    ::=                                 {: RESULT = maquinaHoc.code(Instruction.JUMP,Instruction.STOP); :}
+endwhile    ::=                                 {: RESULT = maquinaHoc.code(Instruction.JUMP, new Instruction(0.0f)); :}
             ;
 
-else        ::= ELSE                            {: RESULT = maquinaHoc.code(Instruction.JUMP, Instruction.STOP); :}
+elseBranch  ::= ELSE                            {: RESULT = maquinaHoc.code(Instruction.JUMP, new Instruction(0.0f)); :}
             ;
 
-endCondif   ::=                                 {: RESULT = maquinaHoc.code(Instruction.jumpFalse,Instruction.STOP); :}
+endCondif   ::=                                 {: RESULT = maquinaHoc.code(Instruction.jumpFalse, new Instruction(0.0f)); :}
             ;
 
 stmtlist    ::= stmt:ind                        {: RESULT = ind; :}
@@ -99,10 +128,11 @@ stmtlist    ::= stmt:ind                        {: RESULT = ind; :}
             ;
 
 cond        ::= ParIzq expr ParDer              {: RESULT = maquinaHoc.getProgP(); :}
+            ;
 
-expr        ::= NUM:valNum                      {: RESULT = maquinaHoc.code(Instruction.constPush, new Instruction(valNum)); :} // Creo que hay un bug en pushConst, si es que valNum es un SymbolHoc
+expr        ::= NUM:valNum                      {: RESULT = maquinaHoc.code(Instruction.constPush, new Instruction(valNum)); :}
             |   VAR:refVar                      {: RESULT = maquinaHoc.code(Instruction.varPush, new Instruction(refVar), Instruction.EVAL); :}
-            |   CONST_PRED:refConstPred         {: RESULT = ((VariableSymbol)refConstPred).getValue(); :}
+            |   CONST_PRED:refConstPred         {: RESULT = maquinaHoc.code(Instruction.varPush, new Instruction((SymbolHoc)refConstPred), Instruction.EVAL); :}
             |   asgn:valAsign                   {: RESULT = valAsign; :}
             |   expr:ind OpSuma expr            {: maquinaHoc.code(Instruction.ADD); RESULT = ind; :}
             |   expr:ind OpResta expr           {: maquinaHoc.code(Instruction.SUB); RESULT = ind; :}
@@ -113,6 +143,7 @@ expr        ::= NUM:valNum                      {: RESULT = maquinaHoc.code(Inst
             |   BLTIN:funcSimb ParIzq expr:ind ParDer 
                                                 {: maquinaHoc.code(Instruction.BLTIN, new Instruction(funcSimb)); RESULT = ind; :}
             |   OpResta expr:ind                {: maquinaHoc.code(Instruction.NEG); RESULT = ind; :} %prec MENOSUNIARIO
+            |   NOT expr:ind                    {: maquinaHoc.code(Instruction.NOT); RESULT = ind; :}
             |   expr:ind GT expr                {: maquinaHoc.code(Instruction.GT); RESULT = ind; :}
             |   expr:ind GE expr                {: maquinaHoc.code(Instruction.GE); RESULT = ind; :}
             |   expr:ind LT expr                {: maquinaHoc.code(Instruction.LT); RESULT = ind; :}
@@ -122,6 +153,3 @@ expr        ::= NUM:valNum                      {: RESULT = maquinaHoc.code(Inst
             |   expr:ind AND expr               {: maquinaHoc.code(Instruction.AND); RESULT = ind; :}
             |   expr:ind OR expr                {: maquinaHoc.code(Instruction.OR); RESULT = ind; :}
             ;
-
-
-

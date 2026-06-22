@@ -1,4 +1,4 @@
-package HOC5;
+package HOC6;
 import java_cup.runtime.*;
 import java.io.Reader;
 
@@ -13,28 +13,28 @@ import java.io.Reader;
 
 %{
     public SymbolHoc s;
-    public int TipSimb; // Usado para definir el tipo de simbolo
+    public int TipSimb;
 
     private SymbolTable tablaSimbolos;
+    
+    // SOLUCIÓN 1: Declaramos la variable que la Interfaz Gráfica está buscando
+    public java.util.List<String> tokensLeidos = new java.util.ArrayList<>();
 
-    // Nuevo constructor que acepta la tabla compartida
-    public Yylex(java.io.Reader in, SymbolTable tabla) {
+    // SOLUCIÓN 2: El constructor ahora tiene el nombre correcto de la clase
+    public AnalizadorLexico(java.io.Reader in, SymbolTable tabla) {
         this(in);
         this.tablaSimbolos = tabla;
     }
-    
-    /* Codigos que mi profesor usa en su logica, considerando que el tiene una clase unica para simbolos(en lugar de usar FunctionSymbol y VariableSymbol)
-        su comentario: " Se crean los objetos sumbol para ser utilizados durante la sintésis de los atributos Symbol está especificado en java.cup.Symbol "
-     */
 
     private Symbol symbol(int type){
+        tokensLeidos.add(String.format("Token [%d] \t-> Lexema: %s", type, yytext()));
         return new Symbol(type, yyline, yycolumn);
     }
 
     private Symbol symbol(int type, Object value){
+        tokensLeidos.add(String.format("Token [%d] \t-> Lexema: %s \t| Valor: %s", type, yytext(), value.toString()));
         return new Symbol(type, yyline, yycolumn, value);
     }
-
 %}
 
 /* hacemos algunas definiciones regulares, o macros definiciones */
@@ -76,7 +76,7 @@ Digito = [0-9]
 ")"                         { return symbol(AnalizadorSintacticoSym.ParDer); }
 "{"                         { return symbol(AnalizadorSintacticoSym.CorchIzq); }
 "}"                         { return symbol(AnalizadorSintacticoSym.CorchDer); }
-
+","                         { return symbol(AnalizadorSintacticoSym.COMA); }
 
 /* Operadores Aritmeticos y asignación */
 "="                         { return symbol(AnalizadorSintacticoSym.OpAsig); }

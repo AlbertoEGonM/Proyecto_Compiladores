@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "HOC3/java-cup-11b.jar",
+        "HOC3/java-cup-11b-runtime.jar",
+        "HOC3/Nueva carpeta/JFlex.jar"
+    ]
+}

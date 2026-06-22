@@ -1,6 +1,5 @@
-package HOC5;
+package HOC6;
 
-import HOC6.Frame;
 import java.util.Stack;
 
 public class Instruction {
@@ -148,16 +147,16 @@ public class Instruction {
 
     // Operación asignación
     public static final Instruction ASSIGN = new Instruction((stack, code, pc, callStack, self)-> {
-        // CORRECCIÓN: El tope de la pila contiene la variable destino, abajo está el valor
-        Datum dVar = stack.pop(); // 1. Sacamos primero la variable destino
-        Datum dVal = stack.pop(); // 2. Sacamos después el valor calculado
+        // CORRECCIÓN: El orden de extracción estaba invertido.
+        Datum dVar = stack.pop(); // 1. El tope de la pila es la variable (puesto por varPush)
+        Datum dVal = stack.pop(); // 2. Debajo está el valor evaluado de la expresión
         
         float valor = decompress(dVal);
         
-        // Modificar el valor en la tabla de símbolos a través de su referencia segura
+        // Modificar el valor en la tabla de símbolos a través de su referencia
         ((VariableSymbol)dVar.getSym()).setValue(valor);
         
-        // HOC deja el resultado de la asignación en la pila
+        // HOC deja el resultado de la asignación en la pila para encadenamientos (ej. a = b = 5)
         stack.push(new Datum(valor));
     });
 
@@ -175,10 +174,10 @@ public class Instruction {
         
         // Sacamos el argumento que se calculó para la función (ej. el 'expr' dentro de sin(expr))
         Datum d = stack.pop();
-        double arg = (d.getSym() != null) ? ((VariableSymbol)d.getSym()).getValue() : (double) d.getVal();
+        double argumento = (d.getSym() != null) ? ((VariableSymbol)d.getSym()).getValue() : (double) d.getVal();
         
         // Aplicamos la función matemática nativa de HOC3 y el resultado lo devolvemos a la pila
-        double resultado = funcSimb.apply(arg);
+        double resultado = funcSimb.apply(argumento);
         stack.push(new Datum((float) resultado));
     });
 
@@ -295,6 +294,101 @@ public class Instruction {
             pc.value++;              // Condición verdadera -> Ignoramos el destino y entramos al bloque
         }
     });
+
+    // **   --  --  Instrucciones de HOC6   --  --      **  //
+
+    public static final Instruction call = new Instruction((stack, code, pc, callStack, self) -> {
+        // 1. Leemos qué función vamos a ejecutar y avanzamos el PC
+        UserFunctionSymbol func = (UserFunctionSymbol) code[pc.value++].getSym();
+        
+        // 2. Leemos cuántos argumentos se metieron a la pila y avanzamos el PC
+        int nArgs = (int) code[pc.value++].getVal();
+        
+        // 3. Calculamos la posición base de los argumentos en la pila de datos
+        int argOffset = stack.size() - nArgs;
+        
+        // 4. Armamos el Marco y lo guardamos en el historial
+        // pc.value actual es la dirección exacta a la que debemos volver
+        callStack.push(new Frame(pc.value, argOffset, func));
+        
+        // 5. ¡El gran salto! Cambiamos el PC al inicio de la función
+        pc.value = func.getStartAddress(); 
+    });
+
+    public static final Instruction ret = new Instruction((stack, code, pc, callStack, self) -> {
+        // 1. Rescatamos el valor que la función calculó (está en la cima de la pila)
+        Datum resultado = stack.pop();
+        
+        // 2. Sacamos nuestra "foto" del historial
+        Frame marco = callStack.pop();
+        
+        // 3. Limpiamos todos los argumentos que usamos de la pila principal
+        while (stack.size() > marco.getArgOffset()) {
+            stack.pop();
+        }
+        
+        // 4. Dejamos el resultado limpio para que el programa original lo use
+        stack.push(resultado);
+        
+        // 5. Restauramos el Program Counter para volver a donde estábamos
+        pc.value = marco.getRetPC();
+    });
+
+    public static final Instruction procret = new Instruction((stack, code, pc, callStack, self) -> {
+        Frame marco = callStack.pop();
+        
+        while (stack.size() > marco.getArgOffset()) {
+            stack.pop();
+        }
+        
+        // NUEVO: Agregamos un valor "basura" seguro (0.0) para que la instrucción 
+        // POP de las funciones sueltas no rompa la pila de datos.
+        stack.push(new Datum(0.0f));
+        
+        pc.value = marco.getRetPC();
+    });
+
+    // arg: Lee el valor de un parámetro (ej. $1, $2)
+    public static final Instruction arg = new Instruction((stack, code, pc, callStack, self) -> {
+        // 1. Leemos el número de argumento que se solicitó (el '1' de '$1')
+        int numArg = (int) code[pc.value++].getVal();
+        
+        // 2. Consultamos nuestro marco de ejecución actual
+        Frame marcoActual = callStack.peek();
+        
+        // 3. Calculamos la posición exacta en la memoria
+        // offset es la base. Le sumamos (numArg - 1) porque $1 es el primer elemento (desplazamiento 0)
+        int index = marcoActual.getArgOffset() + numArg - 1;
+        
+        // 4. Obtenemos el dato real (los argumentos ya fueron evaluados antes del call, así que son valores puros)
+        Datum argData = stack.get(index);
+        
+        // 5. Lo empujamos a la cima de la pila para que las operaciones matemáticas (ADD, SUB, etc.) lo usen
+        stack.push(new Datum(argData.getVal()));
+    });
+
+    // argAssign: Permite sobrescribir el valor de un parámetro (ej. $1 = 5)
+    public static final Instruction argAssign = new Instruction((stack, code, pc, callStack, self) -> {
+        // 1. Leemos a qué argumento le vamos a asignar (el '1' de '$1')
+        int numArg = (int) code[pc.value++].getVal();
+        
+        // 2. Extraemos el valor a asignar que la expresión dejó en la cima de la pila
+        Datum dVal = stack.pop();
+        float valor = decompress(dVal);
+        
+        // 3. Consultamos nuestro marco actual
+        Frame marcoActual = callStack.peek();
+        
+        // 4. Calculamos su posición original en la pila
+        int index = marcoActual.getArgOffset() + numArg - 1;
+        
+        // 5. Reemplazamos el dato en esa celda específica de la memoria
+        stack.set(index, new Datum(valor));
+        
+        // 6. Por regla de HOC, una asignación siempre deja el resultado en la pila para encadenamientos (ej. x = $1 = 5)
+        stack.push(new Datum(valor));
+    });
+
 
 
 }

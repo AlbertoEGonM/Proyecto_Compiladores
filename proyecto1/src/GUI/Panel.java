@@ -37,6 +37,7 @@ public class Panel extends JFrame {
         JMenuItem itemLR = new JMenuItem("Analisis LR0");
         JMenuItem itemHOC3 = new JMenuItem("HOC 3");
         JMenuItem itemHOC5 = new JMenuItem("HOC 5");
+        JMenuItem itemHOC6 = new JMenuItem("HOC 6");
 
         // --- CONEXIÓN DE TODAS LAS VENTANAS ---
         // Nota: Para que este archivo compile sin errores, deberás crear 
@@ -63,6 +64,7 @@ public class Panel extends JFrame {
         itemLR.addActionListener(e-> new VentanaLR(this).setVisible(true));
         itemHOC3.addActionListener(e -> new VentanaHOC3(this).setVisible(true));
         itemHOC5.addActionListener(e -> new VentanaHOC5(this).setVisible(true));
+        itemHOC6.addActionListener(e -> new VentanaHOC6(this).setVisible(true));
 
 
         // Ensamblar el menú desplegable
@@ -91,6 +93,7 @@ public class Panel extends JFrame {
         menuSintactico.add(itemLR);
         menuSintactico.add(itemHOC3);
         menuSintactico.add(itemHOC5);
+        menuSintactico.add(itemHOC6);
 
         menuBar.add(menuAFN);
         menuBar.add(menuAFD);

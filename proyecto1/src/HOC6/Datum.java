@@ -1,4 +1,4 @@
-package HOC5; // Manteniendo tu paquete original
+package HOC6; // Manteniendo tu paquete original
 
 public class Datum {
     private Float val;

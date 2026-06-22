@@ -1,18 +1,15 @@
 package HOC5;
 
-import HOC3.SymbolHoc;
-import HOC3.SymbolTable;
 import HOC6.Frame;
-import HOC6.UserFunctionSymbol;
 import java.util.Stack;
 
 public class Machine {
 
     SymbolTable TablaSim;
-    Instruction[] Prog;
+    public Instruction[] Prog;
     int progp;
     ProgramCounter PC;
-    Stack<Datum> stack;
+    public Stack<Datum> stack;
 
     public Stack<Frame> callStack; // Parte del HOC6
     
@@ -61,19 +58,26 @@ public class Machine {
         }
     }
 
-    // Metodo para HOC6
-    public UserFunctionSymbol define(SymbolHoc sym) {
-        // 1. Creamos el nuevo símbolo de función usando el nombre del símbolo original
-        UserFunctionSymbol nuevaFuncion = new UserFunctionSymbol(sym.getName(), AnalizadorSintacticoSym.VAR);
-        
-        // 2. Le decimos en qué parte de la memoria va a empezar a guardarse su código (el progp actual)
-        nuevaFuncion.setStartAddress(this.progp);
-        
-        // 3. Sobreescribimos el símbolo viejo en la Tabla de Símbolos
-        TablaSim.install(nuevaFuncion);
-        
-        return nuevaFuncion;
+    // Prepara la máquina pero no la arranca de golpe
+    public void initEjecucion(int startAddress) {
+        PC.value = startAddress;
     }
+
+    // Ejecuta una sola línea de código y se pausa
+    public boolean ejecutarPaso() {
+        if (PC.value >= progp || Prog[PC.value] == Instruction.STOP) {
+            return false; // Terminó el código
+        }
+        
+        Instruction currentInstr = Prog[PC.value];
+        if (currentInstr == null) return false;
+        
+        PC.value++; // Avanzamos el PC
+        currentInstr.run(stack, Prog, PC, callStack);
+        
+        return true; // Sigue vivo
+    }
+    public int getPC(){return PC.value;};
 
     public int getProgP(){return progp;}
 

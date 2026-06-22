@@ -1,14 +1,15 @@
-package HOC5;
+package HOC6;
 
 import java.io.StringReader;
-import java_cup.runtime.Symbol;
-import java_cup.runtime.Scanner;
+// Estas dos importaciones corrigen el error de "missing type Scanner" y "Symbol"
+import java_cup.runtime.Symbol; 
+import java_cup.runtime.Scanner; 
 
-public class HOC5 {
+public class HOC6 {
 
     private Machine maquina;
 
-    public HOC5() {
+    public HOC6() {
         this.maquina = new Machine();
     }
 
@@ -53,14 +54,21 @@ public class HOC5 {
             
             parser.parse();
             
-            return "FIN DEL ANÁLISIS SINTÁCTICO.\nCódigo compilado exitosamente. Instrucciones: " + maquina.getProgP();
+            return "FIN DEL ANÁLISIS SINTÁCTICO.\nCódigo compilado exitosamente. Total de instrucciones: " + maquina.getProgP();
         } catch (Exception ex) {
             return "Error Sintáctico/Compilación: " + ex.getMessage();
         }
     }
-    
-    // Método obsoleto para retrocompatibilidad rápida si aún lo tienes ligado a otro botón
-    public String ejecutar(String source) {
-        return analizarSintacticamente(source);
+
+    public void ejecutarMaquinaVirtual() {
+        try {
+            if (maquina.getProgP() > 0) {
+                maquina.execute(0);
+            } else {
+                System.out.println("No hay código compilado en la memoria para ejecutar.");
+            }
+        } catch (Exception ex) {
+            System.err.println("Error de ejecución en la Máquina Virtual: " + ex.getMessage());
+        }
     }
 }

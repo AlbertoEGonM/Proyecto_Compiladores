@@ -1,7 +1,5 @@
 package HOC6; // Ajusta al paquete que estés utilizando
 
-import HOC3.SymbolHoc;
-
 public class UserFunctionSymbol extends SymbolHoc {
     // Índice en el vector Prog de la clase Machine donde inicia la ejecución de esta función
     private int startAddress; 
