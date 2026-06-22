@@ -249,10 +249,10 @@ class AnalizadorLexico implements java_cup.runtime.Scanner {
     public SymbolHoc s;
     public int TipSimb; // Usado para definir el tipo de simbolo
 
-    private SymbolTable tablaSimbolos;
+    private SymbolTable tablaSimbolos = new SymbolTable();
 
     // Nuevo constructor que acepta la tabla compartida
-    public Yylex(java.io.Reader in, SymbolTable tabla) {
+    public AnalizadorLexico(java.io.Reader in, SymbolTable tabla) {
         this(in);
         this.tablaSimbolos = tabla;
     }
@@ -758,7 +758,7 @@ class AnalizadorLexico implements java_cup.runtime.Scanner {
           if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
             zzAtEOF = true;
             zzDoEOF();
-              { return new java_cup.runtime.Symbol(sym.EOF); }
+              { return new java_cup.runtime.Symbol(AnalizadorSintacticoSym.EOF); }
           } 
           else {
             zzScanError(ZZ_NO_MATCH);
