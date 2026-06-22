@@ -1,4 +1,4 @@
-package HOC3;
+package HOC5;
 
 public abstract class SymbolHoc {
     protected String name;
