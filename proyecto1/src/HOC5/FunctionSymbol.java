@@ -1,4 +1,4 @@
-package HOC3;
+package HOC5;
 
 import java.util.function.Function;
 
