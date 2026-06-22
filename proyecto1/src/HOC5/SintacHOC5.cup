@@ -98,7 +98,7 @@ stmtlist    ::= stmt:ind                        {: RESULT = ind; :}
             |   stmtlist:ind stmt               {: RESULT = ind; :}
             ;
 
-cond        ::= ParIzq expr ParDer              {: RESULT = maquinaHoc.getProgP() :}
+cond        ::= ParIzq expr ParDer              {: RESULT = maquinaHoc.getProgP(); :}
 
 expr        ::= NUM:valNum                      {: RESULT = maquinaHoc.code(Instruction.constPush, new Instruction(valNum)); :} // Creo que hay un bug en pushConst, si es que valNum es un SymbolHoc
             |   VAR:refVar                      {: RESULT = maquinaHoc.code(Instruction.varPush, new Instruction(refVar), Instruction.EVAL); :}
