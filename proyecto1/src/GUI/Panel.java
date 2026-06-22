@@ -36,7 +36,7 @@ public class Panel extends JFrame {
         JMenuItem itemLL1 = new JMenuItem("Analisis LL1");
         JMenuItem itemLR = new JMenuItem("Analisis LR0");
         JMenuItem itemHOC3 = new JMenuItem("HOC 3");
-        JMenuItem itemHOC5 = new JMenuItem("HOC 5")
+        JMenuItem itemHOC5 = new JMenuItem("HOC 5");
 
         // --- CONEXIÓN DE TODAS LAS VENTANAS ---
         // Nota: Para que este archivo compile sin errores, deberás crear 
