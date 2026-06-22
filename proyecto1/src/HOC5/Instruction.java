@@ -142,22 +142,19 @@ public class Instruction {
             float valReal = (float) ((VariableSymbol) d.getSym()).getValue();
             stack.push(new Datum(valReal));
         } else {
-            stack.push(d); // Si ya era un literal, se queda igual
+            stack.push(d); 
         }
     });
 
     // Operación asignación
     public static final Instruction ASSIGN = new Instruction((stack, code, pc, callStack, self)-> {
-        // CORRECCIÓN: El tope de la pila contiene la variable destino, abajo está el valor
-        Datum dVar = stack.pop(); // 1. Sacamos primero la variable destino
-        Datum dVal = stack.pop(); // 2. Sacamos después el valor calculado
+        Datum dVar = stack.pop(); 
+        Datum dVal = stack.pop(); 
         
         float valor = decompress(dVal);
         
-        // Modificar el valor en la tabla de símbolos a través de su referencia segura
         ((VariableSymbol)dVar.getSym()).setValue(valor);
         
-        // HOC deja el resultado de la asignación en la pila
         stack.push(new Datum(valor));
     });
 
@@ -165,19 +162,16 @@ public class Instruction {
     public static final Instruction PRINT = new Instruction((stack, code, pc, callStack, self) -> {
         Datum d = stack.pop();
         float val = decompress(d);
-        System.out.println(val);     // O mandarlo a tu formHoc3
+        System.out.println(val);
     });
 
     // FUNCIONES MATEMÁTICAS: bltin lee el FunctionSymbol de la celda contigua
     public static final Instruction BLTIN = new Instruction((stack, code, pc, callStack, self) -> {
-        // Obtenemos el símbolo matemático alojado en la celda contigua y avanzamos el PC
         FunctionSymbol funcSimb = (FunctionSymbol) code[pc.value++].getSym();
         
-        // Sacamos el argumento que se calculó para la función (ej. el 'expr' dentro de sin(expr))
         Datum d = stack.pop();
         double arg = (d.getSym() != null) ? ((VariableSymbol)d.getSym()).getValue() : (double) d.getVal();
         
-        // Aplicamos la función matemática nativa de HOC3 y el resultado lo devolvemos a la pila
         double resultado = funcSimb.apply(arg);
         stack.push(new Datum((float) resultado));
     });
