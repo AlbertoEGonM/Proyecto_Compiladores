@@ -1,6 +1,5 @@
-package HOC5;
+package HOC3;
 import java_cup.runtime.*;
-import HOC3.*;
 import java.io.FileReader;
 
 class AnalizadorSintactico;
@@ -35,9 +34,12 @@ parser code {:
  /* Definicion de la gramatica */
 
 terminal SEMIC;
+terminal FUNC, PROC, RETURN;
 terminal OpSuma, OpResta, OpProd, OpDiv, OpAsig, OpPotencia;
 terminal ParIzq, ParDer, CorchIzq, CorchDer;
 terminal PRINT, WHILE, IF, ELSE;
+
+terminal Integer ARG;
 
 terminal SymbolHoc NUM;
 terminal SymbolHoc VAR;
@@ -50,6 +52,8 @@ terminal OR, AND, GT, GE, LT, LE, EQ, NE, NOT;
 non terminal list;
 non terminal Integer asgn, expr, stmt, stmtlist, cond, endcondwhile, endwhile;
 non terminal Integer endCondif, else;
+non terminal Integer defn;
+non terminal SymbolHoc procname;
 
 /* Precedences */
 precedence right OpAsig;
@@ -64,6 +68,8 @@ precedence right OpPotencia;
 /* inicio */
 
 list        ::= stmt
+            |   defn
+            |   list defn
             |   list stmt               /*{: maquinaHoc.code(Instruction.PRINT,Instruction.STOP); :}*/
             ;
  
@@ -80,6 +86,41 @@ stmt        ::= asgn:ind1 SEMIC                 {: RESULT = ind1; :}
                                                 {:  maquinaHoc.Prog[ind2+1].setVal(ind6);
                                                     maquinaHoc.Prog[ind4+1].setVal(maquinaHoc.getProgP()); RESULT = ind1; :}
             |   CorchIzq stmtlist:ind CorchDer  {: RESULT = ind; :}
+            |   RETURN expr:ind1 SEMIC          {: // Retorno de función con valor 
+                                                    maquinaHoc.code(Instruction.ret); 
+                                                    RESULT = ind1; :}
+            |   RETURN SEMIC                    {: 
+                                                    // Retorno de procedimiento (sin valor)
+                                                    maquinaHoc.code(Instruction.procret); 
+                                                    RESULT = maquinaHoc.getProgP(); 
+                                                :}
+            ;
+
+defn        ::= FUNC                            {: 
+                                                    // 1. Ponemos un JUMP falso (placeholder) para brincarnos la función
+                                                    RESULT = maquinaHoc.code(Instruction.JUMP, new Instruction(0.0f)); 
+                                                :} 
+                    procname:funcSym ParIzq ParDer stmt {: 
+                                                    // 2. Al terminar, la función debe regresar un valor (o un 0.0 por defecto)
+                                                    maquinaHoc.code(Instruction.ret); 
+                    
+                                                    // 3. Ahora que sabemos dónde termina la función, reparamos el JUMP inicial
+                                                    int jumpAddress = (Integer) RESULT; // Rescatamos el índice del JUMP
+                                                    maquinaHoc.Prog[jumpAddress + 1].setVal((float) maquinaHoc.getProgP()); 
+                                                :}
+            |   PROC                            {: 
+                                                    RESULT = maquinaHoc.code(Instruction.JUMP, new Instruction(0.0f)); 
+                                                :} 
+                    procname:procSym ParIzq ParDer stmt {: 
+                                                    // Un procedimiento usa procret (no devuelve valor)
+                                                    maquinaHoc.code(Instruction.procret); 
+                    
+                                                    int jumpAddress = (Integer) RESULT;
+                                                    maquinaHoc.Prog[jumpAddress + 1].setVal((float) maquinaHoc.getProgP()); 
+                                                :}
+            ;
+
+procname    ::= VAR:v                           {: RESULT = maquinaHoc.define(v); :}  // Cuando leemos el nombre, lo definimos en la máquina
             ;
 
 endcondwhile ::=                                {: RESULT = maquinaHoc.code(Instruction.jumpFalse,Instruction.STOP); :}

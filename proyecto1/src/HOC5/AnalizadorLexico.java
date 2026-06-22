@@ -2,6 +2,7 @@
 
 package HOC5;
 import java_cup.runtime.*;
+import HOC3.*;
 import java.io.Reader;
 
 
@@ -757,7 +758,7 @@ class AnalizadorLexico implements java_cup.runtime.Scanner {
           if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
             zzAtEOF = true;
             zzDoEOF();
-              { return new java_cup.runtime.Symbol(sym.EOF); }
+              { return new java_cup.runtime.Symbol(AnalizadorSintacticoSym.EOF); }
           } 
           else {
             zzScanError(ZZ_NO_MATCH);

@@ -1,6 +1,5 @@
 package HOC5;
 import java_cup.runtime.*;
-import HOC3.*;
 import java.io.Reader;
 
 %% /* inicio de declaraciones JFlex */
@@ -57,6 +56,9 @@ Digito = [0-9]
 "else"                      { return symbol(AnalizadorSintacticoSym.ELSE); }
 "while"                     { return symbol(AnalizadorSintacticoSym.WHILE); }
 "print"                     { return symbol(AnalizadorSintacticoSym.PRINT); }
+"func"                      { return symbol(AnalizadorSintacticoSym.FUNC); }
+"proc"                      { return symbol(AnalizadorSintacticoSym.PROC); }
+"return"                    { return symbol(AnalizadorSintacticoSym.RETURN); }
 
 /* Operadores Relacionales y Lógicos */
 "=="                        { return symbol(AnalizadorSintacticoSym.EQ); }
@@ -85,6 +87,15 @@ Digito = [0-9]
 "("                         { return symbol(AnalizadorSintacticoSym.ParIzq); }
 ")"                         { return symbol(AnalizadorSintacticoSym.ParDer); }
 \^                          { return symbol(AnalizadorSintacticoSym.OpPotencia); }
+
+/* Argumentos de Funciones ($1, $2, etc.) */
+\${Digito}+                 { 
+                                // Extraemos la subcadena omitiendo el '$' (índice 1 en adelante)
+                                int numArg = Integer.parseInt(yytext().substring(1));
+                                
+                                // Devolvemos el token ARG y le pasamos el número entero como valor
+                                return symbol(AnalizadorSintacticoSym.ARG, numArg); 
+                            }
 
 {Letra}({Letra}|{Digito})*  {    
                                 s = tablaSimbolos.lookup(yytext()); // Como va a leer los nodos integrados previamente?
