@@ -19,8 +19,8 @@ import java.io.Reader;
     private SymbolTable tablaSimbolos;
 
     // Nuevo constructor que acepta la tabla compartida
-    public Yylex(java.io.Reader in, SymbolTable tabla) {
-        this(in);
+  public AnalizadorLexico(java.io.Reader in, SymbolTable tabla) {
+        this(in); // Llama al constructor interno de JFlex
         this.tablaSimbolos = tabla;
     }
     
