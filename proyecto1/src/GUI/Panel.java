@@ -17,6 +17,7 @@ public class Panel extends JFrame {
         JMenu menuAFN = new JMenu("AFN's");
         JMenu menuSintactico = new JMenu("Analisis Sintáctico");
         JMenu menuAFD = new JMenu("AFD's");
+        JMenu menuHOC = new JMenu("calculadoras HOC's");
         /*JPanel panelPrincipal = new JPanel();
         panelPrincipal.setLayout(new BorderLayout());*/
 
@@ -62,6 +63,7 @@ public class Panel extends JFrame {
         itemMostrarAFD.addActionListener(e-> {if(AFD.afdAsignado != null){new VentanaGrafo(this, AFD.afdAsignado).setVisible(AFD.afdAsignado != null);}});
         itemLL1.addActionListener(e-> new VentanaLL1(this).setVisible(true));
         itemLR.addActionListener(e-> new VentanaLR(this).setVisible(true));
+        
         itemHOC3.addActionListener(e -> new VentanaHOC3(this).setVisible(true));
         itemHOC5.addActionListener(e -> new VentanaHOC5(this).setVisible(true));
         itemHOC6.addActionListener(e -> new VentanaHOC6(this).setVisible(true));
@@ -91,13 +93,17 @@ public class Panel extends JFrame {
         // Ensamblar menu sintactico
         menuSintactico.add(itemLL1);
         menuSintactico.add(itemLR);
-        menuSintactico.add(itemHOC3);
-        menuSintactico.add(itemHOC5);
-        menuSintactico.add(itemHOC6);
+
+
+        menuHOC.add(itemHOC3);
+        menuHOC.add(itemHOC5);
+        menuHOC.add(itemHOC6);
 
         menuBar.add(menuAFN);
         menuBar.add(menuAFD);
         menuBar.add(menuSintactico);
+        menuBar.add(menuHOC);
+        
         setJMenuBar(menuBar);
     }
 

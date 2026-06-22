@@ -72,39 +72,39 @@ list        ::= stmt
             ;
  
 asgn        ::= VAR:v OpAsig expr:ind1       
-                    {: 
-                        maquinaHoc.code(Instruction.varPush,new Instruction(v),Instruction.ASSIGN);
-                        RESULT = ind1; 
-                    :}
+                                                {: 
+                                                    maquinaHoc.code(Instruction.varPush,new Instruction(v),Instruction.ASSIGN);
+                                                    RESULT = ind1; 
+                                                :}
             ;
 
 stmt        ::= expr:ind1 SEMIC                 
-                    {: 
-                        maquinaHoc.code(Instruction.POP); 
-                        RESULT = ind1; 
-                    :}
+                                                {: 
+                                                    maquinaHoc.code(Instruction.POP); 
+                                                    RESULT = ind1; 
+                                                :}
             |   PRINT expr:ind1 SEMIC           
-                    {: 
-                        maquinaHoc.code(Instruction.PRINT); 
-                        RESULT = ind1; 
-                    :}
+                                                {: 
+                                                    maquinaHoc.code(Instruction.PRINT); 
+                                                    RESULT = ind1; 
+                                                :}
             |   WHILE marker:loopStart cond endcondwhile:jumpFalseIdx stmt endwhile:jumpEndIdx   
-                    {: 
-                        maquinaHoc.Prog[jumpEndIdx] = new Instruction((float)loopStart);
-                        maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)maquinaHoc.getProgP()); 
-                        RESULT = loopStart; 
-                    :}
+                                                {: 
+                                                    maquinaHoc.Prog[jumpEndIdx] = new Instruction((float)loopStart);
+                                                    maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)maquinaHoc.getProgP()); 
+                                                    RESULT = loopStart; 
+                                                :}
             |   IF cond endCondif:jumpFalseIdx stmt
-                    {: 
-                        maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)maquinaHoc.getProgP());
-                        RESULT = jumpFalseIdx; 
-                    :}
+                                                {: 
+                                                    maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)maquinaHoc.getProgP());
+                                                    RESULT = jumpFalseIdx; 
+                                                :}
             |   IF cond endCondif:jumpFalseIdx stmt elseBranch:jumpEndIdx stmt
-                    {:  
-                        maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)(jumpEndIdx + 1));
-                        maquinaHoc.Prog[jumpEndIdx] = new Instruction((float)maquinaHoc.getProgP()); 
-                        RESULT = jumpFalseIdx; 
-                    :}
+                                                {:  
+                                                    maquinaHoc.Prog[jumpFalseIdx] = new Instruction((float)(jumpEndIdx + 1));
+                                                    maquinaHoc.Prog[jumpEndIdx] = new Instruction((float)maquinaHoc.getProgP()); 
+                                                    RESULT = jumpFalseIdx; 
+                                                :}
             |   CorchIzq stmtlist:ind CorchDer  {: RESULT = ind; :}
             ;
 

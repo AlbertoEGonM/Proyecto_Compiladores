@@ -93,12 +93,12 @@ asgn        ::= VAR:v OpAsig expr:ind1
             ;
 
 stmt        ::= expr:ind1 SEMIC
-                    {:
-                        // Esta regla ahora cubre TODO: asignaciones ("a=1;") y funciones ("saludar();")
-                        // Y limpia la pila correctamente en ambos casos
-                        maquinaHoc.code(Instruction.POP);
-                        RESULT = ind1;
-                    :}
+                                                {:
+                                                    // Esta regla ahora cubre TODO: asignaciones ("a=1;") y funciones ("saludar();")
+                                                    // Y limpia la pila correctamente en ambos casos
+                                                    maquinaHoc.code(Instruction.POP);
+                                                    RESULT = ind1;
+                                                :}
             |   PRINT expr:ind1 SEMIC           {: maquinaHoc.code(Instruction.PRINT); RESULT = ind1; :}
             |   WHILE marker:loopStart cond endcondwhile:jumpFalseIdx stmt endwhile:jumpEndIdx   
                                                 {: 

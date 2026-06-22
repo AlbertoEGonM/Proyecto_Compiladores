@@ -42,16 +42,16 @@ Incluye además un intérprete tipo *HOC* (calculadora de expresiones aritmétic
 ## Arquitectura del proyecto
 
 ```
-                ┌────────────┐
-   Expresión    │  lexico.   │
-   Regular ───► │  ERaAFN /  │
+                ┌─────────────┐
+   Expresión    │  lexico.    │
+   Regular ───► │  ERaAFN /   │
                 │ GeneradorAFN│
-                └─────┬──────┘
+                └─────┬───────┘
                       │ construye
                       ▼
                 ┌────────────┐        Thompson         ┌────────────┐
                 │  AFN.AFN   │ ── Unir/Concat/Cerr ──► │  AFN.AFN   │
-                └─────┬──────┘                          └─────┬──────┘
+                └─────┬──────┘                         └─────┬──────┘
                       │ ConvertirAFD()
                       ▼
                 ┌────────────┐
@@ -69,13 +69,13 @@ Incluye además un intérprete tipo *HOC* (calculadora de expresiones aritmétic
             └─────────┬────────────┘
                       │ tokens
                       ▼
-        ┌──────────────────────────────────┐
+        ┌────────────────────────────────────┐
         │ sintactico.Gramatica (First/Follow)│
-        └───────┬───────────────┬──────────┘
+        └───────┬───────────────┬────────────┘
                 ▼               ▼
-        ┌──────────────┐  ┌──────────────┐
+        ┌───────────────┐  ┌───────────────┐
         │ sintactico.LL1│  │ sintactico.LR0│
-        └──────────────┘  └──────────────┘
+        └───────────────┘  └───────────────┘
 ```
 
 Toda la interacción del usuario ocurre a través de **GUI.Panel**, que despliega un menú con ventanas modales (`JDialog`) para cada operación.
