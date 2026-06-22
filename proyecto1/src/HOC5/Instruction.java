@@ -1,6 +1,6 @@
 package HOC5;
 
-import HOC3.HOC3;
+import HOC3.FunctionSymbol;
 import HOC3.SymbolHoc;
 import HOC3.VariableSymbol;
 import HOC6.Frame;
@@ -53,6 +53,7 @@ public class Instruction {
     // Getters para que las funciones examinadoras saquen los argumentos contiguos
     public SymbolHoc getSym() { return sym; }
     public float getVal() { return val; }
+    public void setVal(float ignored) { throw new UnsupportedOperationException("Instruction literals are immutable"); }
     
     private static float decompress(Datum d) {
         if (d.getSym() != null && d.getSym() instanceof VariableSymbol) {
@@ -175,7 +176,7 @@ public class Instruction {
     // FUNCIONES MATEMÁTICAS: bltin lee el FunctionSymbol de la celda contigua
     public static final Instruction BLTIN = new Instruction((stack, code, pc, callStack, self) -> {
         // Obtenemos el símbolo matemático alojado en la celda contigua y avanzamos el PC
-        HOC3.FunctionSymbol funcSimb = (HOC3.FunctionSymbol) code[pc.value++].getSym();
+        FunctionSymbol funcSimb = (FunctionSymbol) code[pc.value++].getSym();
         
         // Sacamos el argumento que se calculó para la función (ej. el 'expr' dentro de sin(expr))
         Datum d = stack.pop();

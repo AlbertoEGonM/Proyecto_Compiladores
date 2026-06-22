@@ -1,6 +1,7 @@
 package HOC5;
 
-import HOC3.*;
+import HOC3.SymbolHoc;
+import HOC3.SymbolTable;
 import HOC6.Frame;
 import HOC6.UserFunctionSymbol;
 import java.util.Stack;

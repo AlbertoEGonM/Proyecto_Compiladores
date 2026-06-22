@@ -172,7 +172,7 @@ public class VentanaHOC5 extends JDialog {
         });
 
         btnEjecutar.addActionListener(e -> {
-            txtResultados.setText("1.0"); // Texto temporal simulando la imagen
+            txtResultados.setText(hoc5.ejecutar(txtEntrada.getText()));
      
         });
     }

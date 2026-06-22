@@ -14,11 +14,11 @@ public class SymbolTable {
     // Pre-carga los elementos nativos de HOC 3
     private void initStandardLibrary() {
         // 1. Constantes (CUP las tratará gramaticalmente como variables 'VAR')
-        table.put("PI" , new VariableSymbol("PI" , AnalizadorSintacticoSym.COSNT_PRED, Math.PI));
-        table.put("E"  , new VariableSymbol("E"  , AnalizadorSintacticoSym.COSNT_PRED, Math.E));
-        table.put("GAMMA", new VariableSymbol("GAMMA", AnalizadorSintacticoSym.COSNT_PRED, 0.57721566490153286060));
-        table.put("DEG", new VariableSymbol("DEG", AnalizadorSintacticoSym.COSNT_PRED, 57.29577951308232));
-        table.put("PHI", new VariableSymbol("PHI", AnalizadorSintacticoSym.COSNT_PRED, 1.618033988749895));
+        table.put("PI" , new VariableSymbol("PI" , AnalizadorSintacticoSym.CONST_PRED, Math.PI));
+        table.put("E"  , new VariableSymbol("E"  , AnalizadorSintacticoSym.CONST_PRED, Math.E));
+        table.put("GAMMA", new VariableSymbol("GAMMA", AnalizadorSintacticoSym.CONST_PRED, 0.57721566490153286060));
+        table.put("DEG", new VariableSymbol("DEG", AnalizadorSintacticoSym.CONST_PRED, 57.29577951308232));
+        table.put("PHI", new VariableSymbol("PHI", AnalizadorSintacticoSym.CONST_PRED, 1.618033988749895));
 
         // 2. Funciones matemáticas (Built-ins -> 'sym.BLTIN')
         table.put("sin",   new FunctionSymbol("sin",   AnalizadorSintacticoSym.BLTIN, Math::sin));
