@@ -2,7 +2,7 @@ package HOC3;
 
 public abstract class SymbolHoc {
     protected String name;
-    protected int tokenType; // Almacenará valores como sym.VAR o sym.BLTIN
+    protected int tokenType; // Almacenará valores como VAR o BLTIN
 
     public SymbolHoc(String name, int tokenType) {
         this.name = name;
